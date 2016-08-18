@@ -23,7 +23,11 @@ class ViewController: UIViewController {
 
     @IBAction func tapped() {
         let info = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: nil)
-        let comment = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment to this library", handler: nil, accessoryView: UISwitch())
+        let comment = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment to this library", handler: nil, accessoryView: UISwitch(), accessoryHandler: { (accessoryView) in
+            if let accessoryView = accessoryView as? UISwitch {
+                print(accessoryView.on)
+            }
+        })
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 70, height: 35)))
         view.backgroundColor = UIColor.blueColor()
         let menu = MaterialAction(icon: UIImage(named: "Menu"), title: "Open other action sheet controller Open other action sheet controller", handler: nil, accessoryView: view)

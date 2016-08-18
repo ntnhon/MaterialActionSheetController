@@ -13,9 +13,9 @@ public struct MaterialAction {
     public let title: String
     public let handler: (() -> Void)?
     public let accessoryView: UIView?
-    public let accessoryHandler: ((UIView) -> Void)?
+    public let accessoryHandler: ((UIView?) -> Void)?
     
-    public init(icon icon: UIImage?, title: String, handler: (() -> Void)?, accessoryView: UIView? = nil, accessoryHandler: ((UIView) -> Void)? = nil) {
+    public init(icon icon: UIImage?, title: String, handler: (() -> Void)?, accessoryView: UIView? = nil, accessoryHandler: ((UIView?) -> Void)? = nil) {
         self.icon = icon
         self.title = title
         self.handler = handler
@@ -213,12 +213,23 @@ extension MaterialActionSheetController: UITableViewDataSource {
         
         let cell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetTableViewCell
         cell.bind(action: action)
+        
+        cell.onTapAccessoryView = { [unowned self] in
+            action.accessoryHandler?(action.accessoryView)
+        }
+        
         return cell
     }
 }
 
 // MARK: UITableViewDelegate
 extension MaterialActionSheetController: UITableViewDelegate {
+    // Selection logic
+    public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        print("select")
+    }
+    
+    // Add separator between sections
     public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0
     }
@@ -268,8 +279,11 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
     private var customAccessoryViewWidthConstraint: NSLayoutConstraint!
     private var customAccessoryViewHeightConstraint: NSLayoutConstraint!
     
+    var onTapAccessoryView: (() -> Void)?
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .None
         contentView.addSubview(iconImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(customAccessoryView)
@@ -318,6 +332,16 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         if let accessoryView = action.accessoryView {
             customAccessoryViewWidthConstraint.constant = accessoryView.bounds.size.width
             customAccessoryViewHeightConstraint.constant = accessoryView.bounds.size.height
+            
+            
+            if let accessoryView = accessoryView as? UIControl {
+                accessoryView.addTarget(self, action: #selector(MaterialActionSheetTableViewCell.accessoryViewTapped), forControlEvents: [.TouchUpInside])
+            } else {
+                let accessoryTap = UITapGestureRecognizer(target: self, action: #selector(MaterialActionSheetTableViewCell.accessoryViewTapped))
+                accessoryView.userInteractionEnabled = true
+                accessoryView.addGestureRecognizer(accessoryTap)
+            }
+            
             customAccessoryView.addSubview(accessoryView)
         }
     }
@@ -333,6 +357,10 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         customAccessoryViewWidthConstraint.constant = 0
         customAccessoryViewHeightConstraint.constant = 0
     }
+    
+    @objc private func accessoryViewTapped() {
+        onTapAccessoryView?()
+    }
 }
 
 private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
@@ -341,11 +369,13 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .None
         contentView.addSubview(titleLabel)
         contentView.addSubview(messageLabel)
         
         let margin: CGFloat = 4
         
+        // Auto layout titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.textAlignment = .Center
         titleLabel.numberOfLines = 0
@@ -356,7 +386,7 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         NSLayoutConstraint(item: titleLabel, attribute: .Trailing, relatedBy: .Equal, toItem: contentView, attribute: .TrailingMargin, multiplier: 1, constant: 0).active = true
         NSLayoutConstraint(item: titleLabel, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: margin).active = true
         
-        
+        // Auto layout messageLabel
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.textAlignment = .Justified
         messageLabel.numberOfLines = 0
