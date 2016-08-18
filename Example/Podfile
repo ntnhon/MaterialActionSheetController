@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'MaterialActionSheetController_Example' do
+  pod 'MaterialActionSheetController', :path => '../'
+
+  target 'MaterialActionSheetController_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
