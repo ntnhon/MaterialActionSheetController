@@ -1,0 +1,6 @@
+framework module MaterialActionSheetController {
+  umbrella header "MaterialActionSheetController-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,6 @@
+framework module Pods_MaterialActionSheetController_Example {
+  umbrella header "Pods-MaterialActionSheetController_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

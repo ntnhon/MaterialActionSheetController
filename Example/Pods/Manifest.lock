@@ -1,0 +1,16 @@
+PODS:
+  - MaterialActionSheetController (0.1.0)
+
+DEPENDENCIES:
+  - MaterialActionSheetController (from `../`)
+
+EXTERNAL SOURCES:
+  MaterialActionSheetController:
+    :path: ../
+
+SPEC CHECKSUMS:
+  MaterialActionSheetController: b8202fba5179fe8b2ec3122a679f554acae6da3d
+
+PODFILE CHECKSUM: 3e913a5f53aca44a2b25fa07f37cb4a8a526ad3e
+
+COCOAPODS: 1.0.1
