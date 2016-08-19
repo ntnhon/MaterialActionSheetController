@@ -1,79 +1,28 @@
 # MaterialActionSheetController
-A Google like action sheet for iOS written in Swift.
 
 [![CI Status](http://img.shields.io/travis/Thanh-Nhon Nguyen/MaterialActionSheetController.svg?style=flat)](https://travis-ci.org/Thanh-Nhon Nguyen/MaterialActionSheetController)
 [![Version](https://img.shields.io/cocoapods/v/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 [![License](https://img.shields.io/cocoapods/l/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 [![Platform](https://img.shields.io/cocoapods/p/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 
-## Screenshots
+## Example
 
-## Features
-
-- [x] Using blocks to configure actions
-- [x] Action with optional icon and accessory view
-- [x] Handling touch on accessory view
-- [x] Separate long action list in sections
-- [x] Customizable theme by subscribing to `UIAppearance`
-- [x] 2 built-in themes: light & dark
-
-## Todos
-
-- Swift 3 compliant
-- Present on iPad as a pop-up
-- Custom header
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
 
-- iOS 8.0+
-- Xcode 7.3
-
 ## Installation
 
-#### CocoaPods
-MaterialActionSheetController is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
+MaterialActionSheetController is available through [CocoaPods](http://cocoapods.org). To install
+it, simply add the following line to your Podfile:
 
 ```ruby
-pod 'MaterialActionSheetController'
+pod "MaterialActionSheetController"
 ```
 
-#### Manually
+## Author
 
-Add `MaterialActionSheetController.swift` to your project
-
-## Usage
-
-```swift
-// Import MaterialActionSheetController if you're using CocoaPods
-import MaterialActionSheetController
-```
-```swift
-// Create an action
-let lightBulbAction = MaterialAction(icon: UIImage(named: "lightbulb"), title: "Action with UISwitch as an accessory view", handler: { [unowned self] in
-            self.doSomething()
-        }, accessoryView: UISwitch(), accessoryHandler: { [unowned self] (accessoryView) in
-            if let lightBulbSwitch = accessoryView as? UISwitch {
-                if accessoryView.on {
-                    print("Light is ON!")
-                } else {
-                    print("Light is OFF!")
-                }
-            }
-            self.doSomeOtherThing()
-    })
-```
-```swift
-// Then create and present your MaterialActionSheetController
-// parameter sections is a variadic which take a flexible list of section
-let materialActionSheetController = MaterialActionSheetController(title: "A nice title", message: "A friendly message", sections: [aCoolAction, anotherCoolAction], [cancelAction])
-presentViewController(materialActionSheetController, animated: true, completion: nil)
-```
-- See this short [article](http://en.swifter.tips/variadic/) for more information about variadic.
-- See code in demo for more detailed examples.
-
-## Contribute
-
-Feel free to make PR, contributions are warmly welcome and appreciated.
+Thanh-Nhon Nguyen, ntnhon.cs@gmail.com
 
 ## License
 
