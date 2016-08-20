@@ -83,6 +83,11 @@ let materialActionSheetController = MaterialActionSheetController(
 // Customize theme
 materialActionSheetController.theme = MaterialActionSheetTheme.dark()
 
+// Custom header view
+let imageView = UIImageView(image: UIImage(named: "myimage"))
+imageView.bounds = CGRect(origin: CGPoint.zero, size: CGSize(width: 300, height: 100))
+materialActionSheetController.customHeaderView = imageView
+
 presentViewController(materialActionSheetController, animated: true, completion: nil)
 ```
 See code in demo for more detailed examples.
