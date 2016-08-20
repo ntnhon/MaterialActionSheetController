@@ -21,6 +21,7 @@ final class ExampleViewController: UITableViewController {
     
     private func doSomething() {
         // Dummy function
+        print("I've done something.\n")
     }
     
     private func fullOption(theme theme: MaterialActionSheetTheme) {
@@ -29,7 +30,6 @@ final class ExampleViewController: UITableViewController {
             icon: UIImage(named: "Info"),
             title: "Library information",
             handler: { [unowned self] (accessoryView) in
-                print("MaterialActionSheetController v1.0\n")
                 self.doSomething()
         })
         
@@ -38,7 +38,6 @@ final class ExampleViewController: UITableViewController {
             icon: UIImage(named: "Comment"),
             title: "Say something about this library",
             handler: { [unowned self] (accessoryView) in
-                print("MaterialActionSheetController is in its early stages, contributions are warmly welcome!\n")
                 self.doSomething()
         })
         
@@ -46,7 +45,6 @@ final class ExampleViewController: UITableViewController {
             icon: UIImage(named: "Menu"),
             title: "This is a very long action title and it is wrapped to multiple lines by default. You can change this behavior by changing theme settings.",
             handler: { [unowned self] (accessoryView) in
-                print("Yes it is, a very long text.\n")
                 self.doSomething()
         })
         
@@ -55,18 +53,10 @@ final class ExampleViewController: UITableViewController {
             icon: UIImage(named: "Light"),
             title: "Edison light bulb will show you how to add and handle UISwitch",
             handler: { [unowned self] (accessoryView) in
-                if let lightBulbSwitch = accessoryView as? UISwitch {
-                    if lightBulbSwitch.on {
-                        print("It's so bright here!\n")
-                    } else {
-                        print("It's so dark here!\n")
-                    }
-                }
-                print("Click on the switch to turn on or off the light.\n")
                 self.doSomething()
             },
             accessoryView: UISwitch(),
-            dismissOnAccessoryTouch: true) { [unowned self] (accessoryView) in
+            dismissOnAccessoryTouch: false) { [unowned self] (accessoryView) in
                 if let lightBulbSwitch = accessoryView as? UISwitch {
                     if lightBulbSwitch.on {
                         print("Light is ON!\n")
@@ -83,13 +73,11 @@ final class ExampleViewController: UITableViewController {
             icon: UIImage(named: "Info"),
             title: "Green means you can go ahead",
             handler: { [unowned self] (accessoryView) in
-                print("Okay.\n")
                 self.doSomething()
             },
             accessoryView: greenView,
             dismissOnAccessoryTouch: true,
             accessoryHandler: { [unowned self] (accessoryView) in
-                print("It's green.\n")
                 self.doSomething()
         })
         
@@ -98,13 +86,11 @@ final class ExampleViewController: UITableViewController {
             icon: UIImage(named: "Info"),
             title: "Yellow means you should go faster",
             handler: { [unowned self] (accessoryView) in
-                print("Should I?.\n")
                 self.doSomething()
             },
             accessoryView: yellowColor,
             dismissOnAccessoryTouch: true,
             accessoryHandler: {[unowned self] (accessoryView) in
-                print("It's yellow.\n")
                 self.doSomething()
         })
         
@@ -113,12 +99,10 @@ final class ExampleViewController: UITableViewController {
             icon: UIImage(named: "Info"),
             title: "Move you arse",
             handler: { [unowned self] (accessoryView) in
-                print("It's red.\n")
                 self.doSomething()
             },
             accessoryView: redView, dismissOnAccessoryTouch: true,
             accessoryHandler: { [unowned self] (accessoryView) in
-                print("Really?.\n")
                 self.doSomething()
         })
         
@@ -126,19 +110,82 @@ final class ExampleViewController: UITableViewController {
         let materialActionSheetController = MaterialActionSheetController(
             title: "Material action sheet controller",
             message: "A Google like action sheet controller. Create and use it the way you do with UIAlertController.",
-            sections: [infoAction], [addCommentAction, menuAction], [lightBulbAction], [greenAction, yellowAction, redAction])
+            actionSections: [infoAction], [addCommentAction, menuAction], [lightBulbAction], [greenAction, yellowAction, redAction])
         
         materialActionSheetController.theme = theme
         
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
-    private func noHeader() {
+    private func customHeader(theme theme: MaterialActionSheetTheme) {
+        let thankAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Thanks for the heads up!", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+        })
         
+        let grewUpAction = MaterialAction(icon: UIImage(named: "Comment"), title: "The child is grown, the dream is gone...", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+        })
+        
+        let materialActionSheetController = MaterialActionSheetController(
+            title: nil,
+            message: nil,
+            actionSections: [thankAction, grewUpAction])
+        
+        materialActionSheetController.theme = theme
+        
+        let imageView = UIImageView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.mainScreen().bounds.width, height: 150)))
+        imageView.image = UIImage(named: "Trap")
+        materialActionSheetController.customHeaderView = imageView
+        
+        presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
-    private func singleSection() {
+    private func noHeader(theme theme: MaterialActionSheetTheme) {
+        let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+        })
+
         
+        let commentAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+        })
+        
+        let lightBulbAction = MaterialAction(
+            icon: UIImage(named: "Light"),
+            title: "Edison light bulb will show you how to add and handle UISwitch",
+            handler: { [unowned self] (accessoryView) in
+                self.doSomething()
+            },
+            accessoryView: UISwitch(),
+            dismissOnAccessoryTouch: false) { [unowned self] (accessoryView) in
+                if let lightBulbSwitch = accessoryView as? UISwitch {
+                    if lightBulbSwitch.on {
+                        print("Light is ON!\n")
+                    } else {
+                        print("Light is OFF!\n")
+                    }
+                }
+                self.doSomething()
+        }
+        
+        let materialActionSheetController = MaterialActionSheetController(title: nil, message: nil, actionSections: [infoAction, commentAction], [lightBulbAction])
+        materialActionSheetController.theme = theme
+        presentViewController(materialActionSheetController, animated: true, completion: nil)
+    }
+    
+    private func singleSection(theme theme: MaterialActionSheetTheme) {
+        let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+            })
+        
+        
+        let commentAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+            })
+        
+        let materialActionSheetController = MaterialActionSheetController(title: nil, message: nil, actionSections: [infoAction, commentAction])
+        materialActionSheetController.theme = theme
+        presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
     private func dummyColorView(color: UIColor) -> UIView {
@@ -151,12 +198,25 @@ final class ExampleViewController: UITableViewController {
 
 extension ExampleViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.section == 0 {
-            if indexPath.row == 0  {
-                fullOption(theme: lightTheme)
-            } else {
-                fullOption(theme: darkTheme)
-            }
+        switch (indexPath.section, indexPath.row) {
+        case (0, 0):
+            fullOption(theme: lightTheme)
+        case (0, 1):
+            fullOption(theme: darkTheme)
+        case (1, 0):
+            customHeader(theme: lightTheme)
+        case (1, 1):
+            customHeader(theme: darkTheme)
+        case (2, 0):
+            noHeader(theme: lightTheme)
+        case (2, 1):
+            noHeader(theme: darkTheme)
+        case (3, 0):
+            singleSection(theme: lightTheme)
+        case (3, 1):
+            singleSection(theme: darkTheme)
+        default:
+            return
         }
     }
 }

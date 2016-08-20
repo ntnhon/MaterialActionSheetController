@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: Action
-public typealias handlerWithAccessoryView = ((accessoryView: UIView?) -> Void)
+public typealias handlerWithAccessoryView = (accessoryView: UIView?) -> Void
 public struct MaterialAction {
     public let icon: UIImage?
     public let title: String
@@ -58,7 +58,7 @@ public struct MaterialActionSheetTheme {
     public var iconTemplateColor: UIColor = UIColor.darkGrayColor()
     /// This will treat your icon as a template and apply iconColor on it. Default is true
     public var useIconImageAsTemplate: Bool = true
-    public var maxHeight: CGFloat = UIScreen.mainScreen().bounds.height*2/3
+    public var maxHeight: CGFloat = UIScreen.mainScreen().bounds.height*3/4
     public var separatorColor: UIColor = UIColor.lightGrayColor().colorWithAlphaComponent(0.5)
     /// In case there is no header (title and message are both nil)
     public var firstSectionIsHeader: Bool = false
@@ -93,32 +93,30 @@ public final class MaterialActionSheetController: UIViewController {
     /// Invoked when MaterialAcionSheetController is completely dismissed
     public var didDismiss: (() -> Void)?
     
+    /// Custom header view
+    public var customHeaderView: UIView?
+    
     /// Customizable theme, default is light
-    public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light() {
-        didSet {
-            MaterialActionSheetTheme.currentTheme = theme
-        }
-    }
+    public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light()
     
     private let applicationWindow = (UIApplication.sharedApplication().delegate!.window!)!
-    private var actions: [MaterialAction] = []
     private var dimBackgroundView = UIView()
     private let tableView = UITableView(frame: UIScreen.mainScreen().bounds, style: .Plain)
     
     private var _title: String?
     private var message: String?
-    private var isNoHeader: Bool {
+    private var noHeader: Bool {
         return _title == nil && message == nil
     }
-    private var sections: [[MaterialAction]] = []
+    private var actionSections: [[MaterialAction]] = []
     
     /// If title and message are both nil, header is omitted
-    public convenience init(title title: String?, message: String?, sections: [MaterialAction]...) {
+    public convenience init(title title: String?, message: String?, actionSections: [MaterialAction]...) {
         self.init()
         self._title = title
         self.message = message
-        for section in sections {
-            self.sections.append(section)
+        for actionSection in actionSections {
+            self.actionSections.append(actionSection)
         }
     }
     
@@ -134,6 +132,7 @@ public final class MaterialActionSheetController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        MaterialActionSheetTheme.currentTheme = theme
         addDimBackgroundView()
         addTableView()
     }
@@ -209,7 +208,8 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
-        tableView.separatorColor = UIColor.clearColor()
+        tableView.separatorColor = theme.backgroundColor
+        tableView.backgroundColor = theme.backgroundColor
         applicationWindow.addSubview(tableView)
     }
 }
@@ -218,33 +218,39 @@ public final class MaterialActionSheetController: UIViewController {
 /// 
 extension MaterialActionSheetController: UITableViewDataSource {
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        if isNoHeader {
-            return sections.count
+        if noHeader {
+            return actionSections.count
         }
         
-        return sections.count + 1
+        return actionSections.count + 1
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isNoHeader == false && section == 0 {
-            return 1
+        if noHeader {
+            // Without header
+            return actionSections[section].count
+        } else {
+            // With header
+            if section == 0 {
+                return 1
+            } else {
+                return actionSections[section - 1].count
+            }
         }
-        
-        return sections[section - 1].count ?? 0
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if isNoHeader == false && indexPath.section == 0 {
+        if !noHeader && indexPath.section == 0 {
             let headerCell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetHeaderTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetHeaderTableViewCell
             headerCell.bind(title: _title, message: message)
             return headerCell
         }
         
         var action: MaterialAction
-        if isNoHeader {
-            action = sections[indexPath.section][indexPath.row]
+        if noHeader {
+            action = actionSections[indexPath.section][indexPath.row]
         } else {
-            action = sections[indexPath.section - 1][indexPath.row]
+            action = actionSections[indexPath.section - 1][indexPath.row]
         }
         
         let cell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetTableViewCell
@@ -267,15 +273,15 @@ extension MaterialActionSheetController: UITableViewDataSource {
 extension MaterialActionSheetController: UITableViewDelegate {
     // Selection logic
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if isNoHeader == false && indexPath.section == 0 {
+        if noHeader == false && indexPath.section == 0 {
             return
         }
         
         var action: MaterialAction
-        if isNoHeader {
-            action = sections[indexPath.section][indexPath.row]
+        if noHeader {
+            action = actionSections[indexPath.section][indexPath.row]
         } else {
-            action = sections[indexPath.section - 1][indexPath.row]
+            action = actionSections[indexPath.section - 1][indexPath.row]
         }
         
         action.handler?(accessoryView: action.accessoryView)
@@ -284,30 +290,44 @@ extension MaterialActionSheetController: UITableViewDelegate {
     
     // Add separator between sections
     public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
+        if let customHeaderView = customHeaderView {
+            return customHeaderView.bounds.height
+        }
+        
+        return 1
     }
     
     public func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if numberOfSectionsInTableView(tableView) > 1 {
-            return 1
+        return 1
+    }
+    
+    public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if let customHeaderView = customHeaderView {
+            return customHeaderView
         }
         
-        return 0
+        return emptyView()
     }
     
     public func tableView(tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
         // Last section doesn't have separator
         if numberOfSectionsInTableView(tableView) == (section + 1) {
-            return nil
+            return emptyView()
         }
         
-        if (isNoHeader && theme.firstSectionIsHeader && section == 0) ||
-            (!isNoHeader && section == 0) {
+        if (noHeader && theme.firstSectionIsHeader && section == 0) ||
+            (!noHeader && section == 0) {
             return longSeparatorView()
         }
         
         return shortSeparatorView()
+    }
+    
+    private func emptyView() -> UIView {
+        let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
+        view.backgroundColor = theme.backgroundColor
+        return view
     }
     
     private func longSeparatorView() -> UIView {
@@ -320,7 +340,7 @@ extension MaterialActionSheetController: UITableViewDelegate {
         let separatorLeadingSpace = 2 * 16 + theme.iconSize.width // 2 * margin + icon's width
         
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
-        view.backgroundColor = UIColor.clearColor()
+        view.backgroundColor = theme.backgroundColor
         
         let lineView = UIView(frame: CGRect(origin: CGPoint(x: separatorLeadingSpace, y: 0), size: CGSize(width: applicationWindow.frame.size.width - separatorLeadingSpace, height: 1)))
         lineView.backgroundColor = theme.separatorColor
@@ -344,6 +364,7 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .None
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
+        backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         iconImageView.tintColor = MaterialActionSheetTheme.currentTheme.iconTemplateColor
         
         contentView.addSubview(iconImageView)
@@ -438,6 +459,7 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .None
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
+        backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         
         titleLabel.textAlignment = MaterialActionSheetTheme.currentTheme.titleAlignment
         messageLabel.textAlignment = MaterialActionSheetTheme.currentTheme.messageAlignment
