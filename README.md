@@ -14,6 +14,7 @@ A Google like action sheet for iOS written in Swift.
 - [x] Action with optional icon and accessory view
 - [x] Handling touch on accessory view
 - [x] Separate long action list in sections
+- [x] 2 built-in themes: light & dark
 
 ## Todos
 
@@ -21,8 +22,6 @@ A Google like action sheet for iOS written in Swift.
 - Present on iPad as a pop-up
 - Custom header
 - Prevent action sheet from being dismiss too fast while accessory view is animating (Ex: `UISwitch` is switching)
-- Customizable theme by subscribing to `UIAppearance`
-- 2 built-in themes: light & dark
 
 ## Requirements
 
@@ -75,6 +74,9 @@ let materialActionSheetController = MaterialActionSheetController(
         title: "A nice title",
         message: "A friendly message",
         sections: [aCoolAction, anotherCoolAction], [cancelAction])
+
+// Customize theme
+materialActionSheetController.theme = MaterialActionSheetTheme.dark()
 
 presentViewController(materialActionSheetController, animated: true, completion: nil)
 ```
