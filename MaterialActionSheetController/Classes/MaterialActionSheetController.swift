@@ -29,23 +29,60 @@ public struct MaterialAction {
 
 // MARK: Appearance
 public struct MaterialActionSheetTheme {
-    public var dimBackgroundColor: UIColor = UIColor.blackColor().colorWithAlphaComponent(0.3)
+    public var dimBackgroundColor: UIColor = UIColor.blackColor().colorWithAlphaComponent(0.2)
+    public var backgroundColor: UIColor = UIColor.whiteColor()
     public var animationDuration: NSTimeInterval = 0.25
-    public var titleFont: UIFont = UIFont.systemFontOfSize(15)
+    
+    // TitleLabel
+    public var titleFont: UIFont {
+        let fontDescriptiptor = UIFontDescriptor().fontDescriptorWithSymbolicTraits(.TraitBold)
+        return UIFont(descriptor: fontDescriptiptor, size: 15)
+    }
     public var titleColor: UIColor = UIColor.blackColor()
+    public var titleAlignment: NSTextAlignment = .Center
+    
+    // MessageLabel
     public var messageFont: UIFont = UIFont.systemFontOfSize(12)
     public var messageColor: UIColor = UIColor.darkGrayColor()
+    public var messageAlignment: NSTextAlignment = .Center
+    
+    // TextLabel
     public var textFont: UIFont = UIFont.systemFontOfSize(13)
     public var textColor: UIColor = UIColor.darkGrayColor()
+    
     /// Action's title will be truncated if this is false
     public var wrapText: Bool = true
+    
+    // IconImageView
     public var iconSize: CGSize = CGSize(width: 15, height: 15)
+    public var iconTemplateColor: UIColor = UIColor.darkGrayColor()
+    /// This will treat your icon as a template and apply iconColor on it. Default is true
+    public var useIconImageAsTemplate: Bool = true
     public var maxHeight: CGFloat = UIScreen.mainScreen().bounds.height*2/3
     public var separatorColor: UIColor = UIColor.lightGrayColor().colorWithAlphaComponent(0.5)
     /// In case there is no header (title and message are both nil)
     public var firstSectionIsHeader: Bool = false
     
+    
+    // Singleton variable
     private static var currentTheme = MaterialActionSheetTheme()
+    
+    public static func light() -> MaterialActionSheetTheme {
+        // Default is light, no need to modify
+        var lightTheme = MaterialActionSheetTheme()
+        return lightTheme
+    }
+    
+    public static func dark() -> MaterialActionSheetTheme {
+        var darkTheme = MaterialActionSheetTheme()
+        darkTheme.dimBackgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.6)
+        darkTheme.backgroundColor = UIColor.darkGrayColor()
+        darkTheme.titleColor = UIColor.whiteColor()
+        darkTheme.messageColor = UIColor.whiteColor()
+        darkTheme.textColor = UIColor.whiteColor()
+        darkTheme.iconTemplateColor = UIColor.whiteColor()
+        return darkTheme
+    }
 }
 
 // MARK: Life cycle
@@ -56,8 +93,8 @@ public final class MaterialActionSheetController: UIViewController {
     /// Invoked when MaterialAcionSheetController is completely dismissed
     public var didDismiss: (() -> Void)?
     
-    /// Customizable theme
-    public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme() {
+    /// Customizable theme, default is light
+    public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light() {
         didSet {
             MaterialActionSheetTheme.currentTheme = theme
         }
@@ -172,6 +209,7 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
+        tableView.separatorColor = UIColor.clearColor()
         applicationWindow.addSubview(tableView)
     }
 }
@@ -305,6 +343,9 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .None
+        contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
+        iconImageView.tintColor = MaterialActionSheetTheme.currentTheme.iconTemplateColor
+        
         contentView.addSubview(iconImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(customAccessoryView)
@@ -348,7 +389,12 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
     }
     
     func bind(action action: MaterialAction) {
-        iconImageView.image = action.icon
+        if MaterialActionSheetTheme.currentTheme.useIconImageAsTemplate {
+            iconImageView.image = action.icon?.imageWithRenderingMode(.AlwaysTemplate)
+        } else {
+            iconImageView.image = action.icon
+        }
+        
         titleLabel.text = action.title
         if let accessoryView = action.accessoryView {
             customAccessoryViewWidthConstraint.constant = accessoryView.bounds.size.width
@@ -391,6 +437,11 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .None
+        contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
+        
+        titleLabel.textAlignment = MaterialActionSheetTheme.currentTheme.titleAlignment
+        messageLabel.textAlignment = MaterialActionSheetTheme.currentTheme.messageAlignment
+        
         contentView.addSubview(titleLabel)
         contentView.addSubview(messageLabel)
         
@@ -398,7 +449,6 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         
         // Auto layout titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.textAlignment = .Center
         titleLabel.numberOfLines = 0
         titleLabel.font = MaterialActionSheetTheme.currentTheme.titleFont
         titleLabel.textColor = MaterialActionSheetTheme.currentTheme.titleColor
@@ -409,7 +459,6 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         
         // Auto layout messageLabel
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
-        messageLabel.textAlignment = .Justified
         messageLabel.numberOfLines = 0
         messageLabel.font = MaterialActionSheetTheme.currentTheme.messageFont
         messageLabel.textColor = MaterialActionSheetTheme.currentTheme.messageColor
