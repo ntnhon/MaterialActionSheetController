@@ -10,6 +10,10 @@ import UIKit
 import MaterialActionSheetController
 
 final class ExampleViewController: UITableViewController {
+    
+    private let lightTheme = MaterialActionSheetTheme.light()
+    private let darkTheme = MaterialActionSheetTheme.dark()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset.top = 20
@@ -19,7 +23,7 @@ final class ExampleViewController: UITableViewController {
         // Dummy function
     }
     
-    private func fullOption() {
+    private func fullOption(theme theme: MaterialActionSheetTheme) {
         // Section Info
         let infoAction = MaterialAction(
             icon: UIImage(named: "Info"),
@@ -124,6 +128,8 @@ final class ExampleViewController: UITableViewController {
             message: "A Google like action sheet controller. Create and use it the way you do with UIAlertController.",
             sections: [infoAction], [addCommentAction, menuAction], [lightBulbAction], [greenAction, yellowAction, redAction])
         
+        materialActionSheetController.theme = theme
+        
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
@@ -145,14 +151,12 @@ final class ExampleViewController: UITableViewController {
 
 extension ExampleViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let selectedRow = indexPath.row
-        
-        if selectedRow == 0 {
-            fullOption()
-        } else if selectedRow == 1 {
-            noHeader()
-        } else if selectedRow == 2 {
-            singleSection()
+        if indexPath.section == 0 {
+            if indexPath.row == 0  {
+                fullOption(theme: lightTheme)
+            } else {
+                fullOption(theme: darkTheme)
+            }
         }
     }
 }
