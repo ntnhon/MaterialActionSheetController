@@ -8,18 +8,21 @@
 import Foundation
 
 // MARK: Action
+public typealias handlerWithAccessoryView = ((accessoryView: UIView?) -> Void)
 public struct MaterialAction {
     public let icon: UIImage?
     public let title: String
-    public let handler: (() -> Void)?
+    public let handler: handlerWithAccessoryView?
     public let accessoryView: UIView?
-    public let accessoryHandler: ((UIView?) -> Void)?
+    public let accessoryHandler: handlerWithAccessoryView?
+    public let dismissOnAccessoryTouch: Bool?
     
-    public init(icon icon: UIImage?, title: String, handler: (() -> Void)?, accessoryView: UIView? = nil, accessoryHandler: ((UIView?) -> Void)? = nil) {
+    public init(icon icon: UIImage?, title: String, handler: handlerWithAccessoryView?, accessoryView: UIView? = nil, dismissOnAccessoryTouch: Bool? = true, accessoryHandler: handlerWithAccessoryView? = nil) {
         self.icon = icon
         self.title = title
         self.handler = handler
         self.accessoryView = accessoryView
+        self.dismissOnAccessoryTouch = dismissOnAccessoryTouch
         self.accessoryHandler = accessoryHandler
     }
 }
@@ -210,7 +213,12 @@ extension MaterialActionSheetController: UITableViewDataSource {
         cell.bind(action: action)
         
         cell.onTapAccessoryView = { [unowned self] in
-            action.accessoryHandler?(action.accessoryView)
+            action.accessoryHandler?(accessoryView: action.accessoryView)
+            if
+                let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
+                where dismissOnAccessoryTouch == true {
+                self.dismiss()
+            }
         }
         
         return cell
@@ -232,7 +240,8 @@ extension MaterialActionSheetController: UITableViewDelegate {
             action = sections[indexPath.section - 1][indexPath.row]
         }
         
-        action.handler?()
+        action.handler?(accessoryView: action.accessoryView)
+        dismiss()
     }
     
     // Add separator between sections

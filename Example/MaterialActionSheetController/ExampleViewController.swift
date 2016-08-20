@@ -21,27 +21,48 @@ final class ExampleViewController: UITableViewController {
     
     private func fullOption() {
         // Section Info
-        let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] in
-            print("MaterialActionSheetController v1.0\n")
-            self.doSomething()
+        let infoAction = MaterialAction(
+            icon: UIImage(named: "Info"),
+            title: "Library information",
+            handler: { [unowned self] (accessoryView) in
+                print("MaterialActionSheetController v1.0\n")
+                self.doSomething()
         })
         
         // Section comment
-        let addCommentAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Say something about this library", handler: { [unowned self] in
-            print("MaterialActionSheetController is in its early stages, contributions are warmly welcome!\n")
-            self.doSomething()
+        let addCommentAction = MaterialAction(
+            icon: UIImage(named: "Comment"),
+            title: "Say something about this library",
+            handler: { [unowned self] (accessoryView) in
+                print("MaterialActionSheetController is in its early stages, contributions are warmly welcome!\n")
+                self.doSomething()
         })
         
-        let menuAction = MaterialAction(icon: UIImage(named: "Menu"), title: "This is a very long action title and it is wrapped to multiple lines by default. You can change this behavior by changing theme settings.", handler: { [unowned self] in
-            print("Yes it is, a very long text.\n")
-            self.doSomething()
+        let menuAction = MaterialAction(
+            icon: UIImage(named: "Menu"),
+            title: "This is a very long action title and it is wrapped to multiple lines by default. You can change this behavior by changing theme settings.",
+            handler: { [unowned self] (accessoryView) in
+                print("Yes it is, a very long text.\n")
+                self.doSomething()
         })
         
         // Section light
-        let lightBulbAction = MaterialAction(icon: UIImage(named: "Light"), title: "Edison light bulb will show you how to add and handle UISwitch as an accessory view", handler: { [unowned self] in
+        let lightBulbAction = MaterialAction(
+            icon: UIImage(named: "Light"),
+            title: "Edison light bulb will show you how to add and handle UISwitch as an accessory view",
+            handler: { [unowned self] (accessoryView) in
+                if let lightBulbSwitch = accessoryView as? UISwitch {
+                    if lightBulbSwitch.on {
+                        print("It's so bright here!\n")
+                    } else {
+                        print("It's so dark here!\n")
+                    }
+                }
                 print("Click on the switch to turn on or off the light.\n")
                 self.doSomething()
-            }, accessoryView: UISwitch()) { [unowned self] (accessoryView) in
+            },
+            accessoryView: UISwitch(),
+            dismissOnAccessoryTouch: true) { [unowned self] (accessoryView) in
                 if let lightBulbSwitch = accessoryView as? UISwitch {
                     if lightBulbSwitch.on {
                         print("Light is ON!\n")
@@ -51,36 +72,58 @@ final class ExampleViewController: UITableViewController {
                 }
                 self.doSomething()
         }
-        
+
         // Section color
         let greenView = dummyColorView(UIColor.greenColor())
-        let greenAction = MaterialAction(icon: UIImage(named: "Info"), title: "Green means you can go ahead", handler: { [unowned self] in
+        let greenAction = MaterialAction(
+            icon: UIImage(named: "Info"),
+            title: "Green means you can go ahead",
+            handler: { [unowned self] (accessoryView) in
                 print("Okay.\n")
                 self.doSomething()
-            }, accessoryView: greenView, accessoryHandler: { [unowned self] (accessoryView) in
+            },
+            accessoryView: greenView,
+            dismissOnAccessoryTouch: true,
+            accessoryHandler: { [unowned self] (accessoryView) in
                 print("It's green.\n")
                 self.doSomething()
         })
         
         let yellowColor = dummyColorView(UIColor.yellowColor())
-        let yellowAction = MaterialAction(icon: UIImage(named: "Info"), title: "Yellow means you should go faster", handler: { [unowned self] in
+        let yellowAction = MaterialAction(
+            icon: UIImage(named: "Info"),
+            title: "Yellow means you should go faster",
+            handler: { [unowned self] (accessoryView) in
                 print("Should I?.\n")
                 self.doSomething()
-            }, accessoryView: yellowColor, accessoryHandler: {[unowned self] (accessoryView) in
+            },
+            accessoryView: yellowColor,
+            dismissOnAccessoryTouch: true,
+            accessoryHandler: {[unowned self] (accessoryView) in
                 print("It's yellow.\n")
                 self.doSomething()
         })
         
         let redView = dummyColorView(UIColor.redColor())
-        let redAction = MaterialAction(icon: UIImage(named: "Info"), title: "Move you arse", handler: { [unowned self] in
+        let redAction = MaterialAction(
+            icon: UIImage(named: "Info"),
+            title: "Move you arse",
+            handler: { [unowned self] (accessoryView) in
                 print("It's red.\n")
                 self.doSomething()
-            }, accessoryView: redView, accessoryHandler: { [unowned self] (accessoryView) in
+            },
+            accessoryView: redView, dismissOnAccessoryTouch: true,
+            accessoryHandler: { [unowned self] (accessoryView) in
                 print("Really?.\n")
                 self.doSomething()
         })
         
-        let materialActionSheetController = MaterialActionSheetController(title: "Material action sheet controller", message: "A Google like action sheet controller. Create and use it the way you do with UIAlertController.", sections: [infoAction], [addCommentAction, menuAction], [lightBulbAction], [greenAction, yellowAction, redAction])
+        // Create and present MaterialActionSheetController
+        let materialActionSheetController = MaterialActionSheetController(
+            title: "Material action sheet controller",
+            message: "A Google like action sheet controller. Create and use it the way you do with UIAlertController.",
+            sections: [infoAction], [addCommentAction, menuAction], [lightBulbAction], [greenAction, yellowAction, redAction])
+        
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
