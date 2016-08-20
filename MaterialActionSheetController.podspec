@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MaterialActionSheetController'
-  s.version          = '0.2.0'
+  s.version          = '1.0'
   s.summary          = 'A Google like action sheet for iOS written in Swift.'
 
 # This description is used to generate tags and improve search results.
@@ -18,11 +18,11 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-A Google like action sheet for iOS written in Swift. Create and present it the way you do with UIAlertController.
+Lightweight and totally customizable. Create and present it the way you do with UIAlertController.
                        DESC
 
   s.homepage         = 'https://github.com/ntnhon/MaterialActionSheetController'
-  s.screenshots     = 'https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/0a0d9d5715a281b8da5506c07be0864486dfadeb/Screenshots/Full_option.png'
+  s.screenshots     = 'https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_light.png', 'https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_dark.png', 'https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Custom_header_light.png'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Thanh-Nhon Nguyen' => 'ntnhon.cs@gmail.com' }
   s.source           = { :git => 'https://github.com/ntnhon/MaterialActionSheetController.git', :tag => s.version.to_s }
