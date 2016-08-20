@@ -8,8 +8,8 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MaterialActionSheetController'
-  s.version          = '0.1.0'
-  s.summary          = 'A short description of MaterialActionSheetController.'
+  s.version          = '0.2.0'
+  s.summary          = 'A Google like action sheet for iOS written in Swift.'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,14 +18,14 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+A Google like action sheet for iOS written in Swift. Create and present it the way you do with UIAlertController.
                        DESC
 
-  s.homepage         = 'https://github.com/<GITHUB_USERNAME>/MaterialActionSheetController'
-  # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
+  s.homepage         = 'https://github.com/ntnhon/MaterialActionSheetController'
+  s.screenshots     = 'https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/0a0d9d5715a281b8da5506c07be0864486dfadeb/Screenshots/Full_option.png'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Thanh-Nhon Nguyen' => 'ntnhon.cs@gmail.com' }
-  s.source           = { :git => 'https://github.com/<GITHUB_USERNAME>/MaterialActionSheetController.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/ntnhon/MaterialActionSheetController.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
   s.ios.deployment_target = '8.0'
