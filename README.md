@@ -7,7 +7,7 @@ A Google like action sheet for iOS written in Swift.
 [![Platform](https://img.shields.io/cocoapods/p/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 
 ## Screenshots
-
+![Full option](https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/0a0d9d5715a281b8da5506c07be0864486dfadeb/Screenshots/Full_option.png)
 ## Features
 
 - [x] Using blocks to configure actions
