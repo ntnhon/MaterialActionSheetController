@@ -58,7 +58,7 @@ public struct MaterialActionSheetTheme {
     public var iconTemplateColor: UIColor = UIColor.darkGrayColor()
     /// This will treat your icon as a template and apply iconColor on it. Default is true
     public var useIconImageAsTemplate: Bool = true
-    public var maxHeight: CGFloat = UIScreen.mainScreen().bounds.height*2/3
+    public var maxHeight: CGFloat = UIScreen.mainScreen().bounds.height*3/4
     public var separatorColor: UIColor = UIColor.lightGrayColor().colorWithAlphaComponent(0.5)
     /// In case there is no header (title and message are both nil)
     public var firstSectionIsHeader: Bool = false
@@ -94,11 +94,7 @@ public final class MaterialActionSheetController: UIViewController {
     public var didDismiss: (() -> Void)?
     
     /// Customizable theme, default is light
-    public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light() {
-        didSet {
-            MaterialActionSheetTheme.currentTheme = theme
-        }
-    }
+    public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light()
     
     private let applicationWindow = (UIApplication.sharedApplication().delegate!.window!)!
     private var actions: [MaterialAction] = []
@@ -134,6 +130,7 @@ public final class MaterialActionSheetController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
+        MaterialActionSheetTheme.currentTheme = theme
         addDimBackgroundView()
         addTableView()
     }
@@ -209,7 +206,8 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
-        tableView.separatorColor = UIColor.clearColor()
+        tableView.separatorColor = theme.backgroundColor
+        tableView.backgroundColor = theme.backgroundColor
         applicationWindow.addSubview(tableView)
     }
 }
@@ -284,22 +282,22 @@ extension MaterialActionSheetController: UITableViewDelegate {
     
     // Add separator between sections
     public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0
+        return 1
     }
     
     public func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        if numberOfSectionsInTableView(tableView) > 1 {
-            return 1
-        }
-        
-        return 0
+        return 1
+    }
+    
+    public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return emptyView()
     }
     
     public func tableView(tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
         // Last section doesn't have separator
         if numberOfSectionsInTableView(tableView) == (section + 1) {
-            return nil
+            return emptyView()
         }
         
         if (isNoHeader && theme.firstSectionIsHeader && section == 0) ||
@@ -308,6 +306,12 @@ extension MaterialActionSheetController: UITableViewDelegate {
         }
         
         return shortSeparatorView()
+    }
+    
+    private func emptyView() -> UIView {
+        let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
+        view.backgroundColor = theme.backgroundColor
+        return view
     }
     
     private func longSeparatorView() -> UIView {
@@ -320,7 +324,7 @@ extension MaterialActionSheetController: UITableViewDelegate {
         let separatorLeadingSpace = 2 * 16 + theme.iconSize.width // 2 * margin + icon's width
         
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
-        view.backgroundColor = UIColor.clearColor()
+        view.backgroundColor = theme.backgroundColor
         
         let lineView = UIView(frame: CGRect(origin: CGPoint(x: separatorLeadingSpace, y: 0), size: CGSize(width: applicationWindow.frame.size.width - separatorLeadingSpace, height: 1)))
         lineView.backgroundColor = theme.separatorColor
@@ -344,6 +348,7 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .None
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
+        backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         iconImageView.tintColor = MaterialActionSheetTheme.currentTheme.iconTemplateColor
         
         contentView.addSubview(iconImageView)
@@ -438,6 +443,7 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .None
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
+        backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         
         titleLabel.textAlignment = MaterialActionSheetTheme.currentTheme.titleAlignment
         messageLabel.textAlignment = MaterialActionSheetTheme.currentTheme.messageAlignment
