@@ -21,7 +21,6 @@ A Google like action sheet for iOS written in Swift.
 - Swift 3 compliant
 - Present on iPad as a pop-up
 - Custom header
-- Prevent action sheet from being dismiss too fast while accessory view is animating (Ex: `UISwitch` is switching)
 
 ## Requirements
 
@@ -73,15 +72,14 @@ let lightBulbAction = MaterialAction(
 let materialActionSheetController = MaterialActionSheetController(
         title: "A nice title",
         message: "A friendly message",
-        sections: [aCoolAction, anotherCoolAction], [cancelAction])
+        actionSections: [aCoolAction, anotherCoolAction], [cancelAction])
 
 // Customize theme
 materialActionSheetController.theme = MaterialActionSheetTheme.dark()
 
 presentViewController(materialActionSheetController, animated: true, completion: nil)
 ```
-- See this short [article](http://en.swifter.tips/variadic/) for more information about variadic.
-- See code in demo for more detailed examples.
+See code in demo for more detailed examples.
 
 ## Contribute
 

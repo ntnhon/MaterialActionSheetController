@@ -97,24 +97,23 @@ public final class MaterialActionSheetController: UIViewController {
     public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light()
     
     private let applicationWindow = (UIApplication.sharedApplication().delegate!.window!)!
-    private var actions: [MaterialAction] = []
     private var dimBackgroundView = UIView()
     private let tableView = UITableView(frame: UIScreen.mainScreen().bounds, style: .Plain)
     
     private var _title: String?
     private var message: String?
-    private var isNoHeader: Bool {
+    private var noHeader: Bool {
         return _title == nil && message == nil
     }
-    private var sections: [[MaterialAction]] = []
+    private var actionSections: [[MaterialAction]] = []
     
     /// If title and message are both nil, header is omitted
-    public convenience init(title title: String?, message: String?, sections: [MaterialAction]...) {
+    public convenience init(title title: String?, message: String?, actionSections: [MaterialAction]...) {
         self.init()
         self._title = title
         self.message = message
-        for section in sections {
-            self.sections.append(section)
+        for actionSection in actionSections {
+            self.actionSections.append(actionSection)
         }
     }
     
@@ -216,33 +215,39 @@ public final class MaterialActionSheetController: UIViewController {
 /// 
 extension MaterialActionSheetController: UITableViewDataSource {
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        if isNoHeader {
-            return sections.count
+        if noHeader {
+            return actionSections.count
         }
         
-        return sections.count + 1
+        return actionSections.count + 1
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isNoHeader == false && section == 0 {
-            return 1
+        if noHeader {
+            // Without header
+            return actionSections[section].count
+        } else {
+            // With header
+            if section == 0 {
+                return 1
+            } else {
+                return actionSections[section - 1].count
+            }
         }
-        
-        return sections[section - 1].count ?? 0
     }
     
     public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        if isNoHeader == false && indexPath.section == 0 {
+        if !noHeader && indexPath.section == 0 {
             let headerCell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetHeaderTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetHeaderTableViewCell
             headerCell.bind(title: _title, message: message)
             return headerCell
         }
         
         var action: MaterialAction
-        if isNoHeader {
-            action = sections[indexPath.section][indexPath.row]
+        if noHeader {
+            action = actionSections[indexPath.section][indexPath.row]
         } else {
-            action = sections[indexPath.section - 1][indexPath.row]
+            action = actionSections[indexPath.section - 1][indexPath.row]
         }
         
         let cell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetTableViewCell
@@ -265,15 +270,15 @@ extension MaterialActionSheetController: UITableViewDataSource {
 extension MaterialActionSheetController: UITableViewDelegate {
     // Selection logic
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if isNoHeader == false && indexPath.section == 0 {
+        if noHeader == false && indexPath.section == 0 {
             return
         }
         
         var action: MaterialAction
-        if isNoHeader {
-            action = sections[indexPath.section][indexPath.row]
+        if noHeader {
+            action = actionSections[indexPath.section][indexPath.row]
         } else {
-            action = sections[indexPath.section - 1][indexPath.row]
+            action = actionSections[indexPath.section - 1][indexPath.row]
         }
         
         action.handler?(accessoryView: action.accessoryView)
@@ -300,8 +305,8 @@ extension MaterialActionSheetController: UITableViewDelegate {
             return emptyView()
         }
         
-        if (isNoHeader && theme.firstSectionIsHeader && section == 0) ||
-            (!isNoHeader && section == 0) {
+        if (noHeader && theme.firstSectionIsHeader && section == 0) ||
+            (!noHeader && section == 0) {
             return longSeparatorView()
         }
         
