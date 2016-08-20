@@ -7,7 +7,13 @@ A Google like action sheet for iOS written in Swift.
 [![Platform](https://img.shields.io/cocoapods/p/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 
 ## Screenshots
-![Full option](https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/0a0d9d5715a281b8da5506c07be0864486dfadeb/Screenshots/Full_option.png)
+- Demo <br/>
+<img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Demo.gif" width="300">
+
+| Default light theme | Dark theme | Custom header |
+|---|---|---|---|---|
+| <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_light.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_dark.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Custom_header_light.png" width="250"> |
+
 ## Features
 
 - [x] Using closures to configure actions
