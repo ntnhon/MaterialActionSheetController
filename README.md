@@ -10,17 +10,17 @@ A Google like action sheet for iOS written in Swift.
 ![Full option](https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/0a0d9d5715a281b8da5506c07be0864486dfadeb/Screenshots/Full_option.png)
 ## Features
 
-- [x] Using blocks to configure actions
+- [x] Using closures to configure actions
 - [x] Action with optional icon and accessory view
 - [x] Handling touch on accessory view
 - [x] Separate long action list in sections
 - [x] 2 built-in themes: light & dark
+- [x] Customizable header
 
 ## Todos
 
 - Swift 3 compliant
 - Present on iPad as a pop-up
-- Custom header
 
 ## Requirements
 

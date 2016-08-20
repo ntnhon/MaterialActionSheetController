@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: Action
-public typealias handlerWithAccessoryView = ((accessoryView: UIView?) -> Void)
+public typealias handlerWithAccessoryView = (accessoryView: UIView?) -> Void
 public struct MaterialAction {
     public let icon: UIImage?
     public let title: String
@@ -92,6 +92,9 @@ public final class MaterialActionSheetController: UIViewController {
     
     /// Invoked when MaterialAcionSheetController is completely dismissed
     public var didDismiss: (() -> Void)?
+    
+    /// Custom header view
+    public var customHeaderView: UIView?
     
     /// Customizable theme, default is light
     public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light()
@@ -287,6 +290,10 @@ extension MaterialActionSheetController: UITableViewDelegate {
     
     // Add separator between sections
     public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if let customHeaderView = customHeaderView {
+            return customHeaderView.bounds.height
+        }
+        
         return 1
     }
     
@@ -295,6 +302,10 @@ extension MaterialActionSheetController: UITableViewDelegate {
     }
     
     public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if let customHeaderView = customHeaderView {
+            return customHeaderView
+        }
+        
         return emptyView()
     }
     

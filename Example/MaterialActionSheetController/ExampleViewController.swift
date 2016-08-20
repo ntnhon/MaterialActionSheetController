@@ -117,6 +117,29 @@ final class ExampleViewController: UITableViewController {
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
+    private func customHeader(theme theme: MaterialActionSheetTheme) {
+        let thankAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Thanks for the heads up!", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+        })
+        
+        let grewUpAction = MaterialAction(icon: UIImage(named: "Comment"), title: "The child is grown, the dream is gone...", handler: { [unowned self] (accessoryView) in
+            self.doSomething()
+        })
+        
+        let materialActionSheetController = MaterialActionSheetController(
+            title: nil,
+            message: nil,
+            actionSections: [thankAction, grewUpAction])
+        
+        materialActionSheetController.theme = theme
+        
+        let imageView = UIImageView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.mainScreen().bounds.width, height: 150)))
+        imageView.image = UIImage(named: "Trap")
+        materialActionSheetController.customHeaderView = imageView
+        
+        presentViewController(materialActionSheetController, animated: true, completion: nil)
+    }
+    
     private func noHeader(theme theme: MaterialActionSheetTheme) {
         let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (accessoryView) in
             self.doSomething()
@@ -181,12 +204,16 @@ extension ExampleViewController {
         case (0, 1):
             fullOption(theme: darkTheme)
         case (1, 0):
-            noHeader(theme: lightTheme)
+            customHeader(theme: lightTheme)
         case (1, 1):
-            noHeader(theme: darkTheme)
+            customHeader(theme: darkTheme)
         case (2, 0):
-            singleSection(theme: lightTheme)
+            noHeader(theme: lightTheme)
         case (2, 1):
+            noHeader(theme: darkTheme)
+        case (3, 0):
+            singleSection(theme: lightTheme)
+        case (3, 1):
             singleSection(theme: darkTheme)
         default:
             return
