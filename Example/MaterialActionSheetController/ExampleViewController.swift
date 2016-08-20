@@ -49,7 +49,7 @@ final class ExampleViewController: UITableViewController {
         // Section light
         let lightBulbAction = MaterialAction(
             icon: UIImage(named: "Light"),
-            title: "Edison light bulb will show you how to add and handle UISwitch as an accessory view",
+            title: "Edison light bulb will show you how to add and handle UISwitch",
             handler: { [unowned self] (accessoryView) in
                 if let lightBulbSwitch = accessoryView as? UISwitch {
                     if lightBulbSwitch.on {
