@@ -1,5 +1,5 @@
 # MaterialActionSheetController
-A Google like action sheet for iOS written in Swift.
+Lightweight and totally customizable. Create and present it the way you do with UIAlertController.
 
 [![CI Status](http://img.shields.io/travis/Thanh-Nhon Nguyen/MaterialActionSheetController.svg?style=flat)](https://travis-ci.org/Thanh-Nhon Nguyen/MaterialActionSheetController)
 [![Version](https://img.shields.io/cocoapods/v/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
