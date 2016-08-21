@@ -27,6 +27,7 @@ Lightweight and totally customizable. Create and present it the way you do with 
 
 - Swift 3 compliant
 - Present on iPad as a pop-up
+- Documenting
 
 ## Requirements
 
