@@ -1,13 +1,19 @@
 # MaterialActionSheetController
-A Google like action sheet for iOS written in Swift.
+Lightweight and totally customizable. Create and present it the way you do with UIAlertController.
 
-[![CI Status](http://img.shields.io/travis/Thanh-Nhon Nguyen/MaterialActionSheetController.svg?style=flat)](https://travis-ci.org/Thanh-Nhon Nguyen/MaterialActionSheetController)
+<!--[![CI Status](http://img.shields.io/travis/Thanh-Nhon Nguyen/MaterialActionSheetController.svg?style=flat)](https://travis-ci.org/Thanh-Nhon Nguyen/MaterialActionSheetController)-->
 [![Version](https://img.shields.io/cocoapods/v/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 [![License](https://img.shields.io/cocoapods/l/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 [![Platform](https://img.shields.io/cocoapods/p/MaterialActionSheetController.svg?style=flat)](http://cocoapods.org/pods/MaterialActionSheetController)
 
 ## Screenshots
-![Full option](https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/0a0d9d5715a281b8da5506c07be0864486dfadeb/Screenshots/Full_option.png)
+- Demo <br/>
+<img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Demo.gif" width="300">
+
+| Default light theme | Dark theme | Custom header |
+|---|---|---|---|---|
+| <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_light.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_dark.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Custom_header_light.png" width="250"> |
+
 ## Features
 
 - [x] Using closures to configure actions
@@ -21,6 +27,7 @@ A Google like action sheet for iOS written in Swift.
 
 - Swift 3 compliant
 - Present on iPad as a pop-up
+- Documenting
 
 ## Requirements
 
@@ -76,6 +83,11 @@ let materialActionSheetController = MaterialActionSheetController(
 
 // Customize theme
 materialActionSheetController.theme = MaterialActionSheetTheme.dark()
+
+// Custom header view
+let imageView = UIImageView(image: UIImage(named: "myimage"))
+imageView.bounds = CGRect(origin: CGPoint.zero, size: CGSize(width: 300, height: 100))
+materialActionSheetController.customHeaderView = imageView
 
 presentViewController(materialActionSheetController, animated: true, completion: nil)
 ```
