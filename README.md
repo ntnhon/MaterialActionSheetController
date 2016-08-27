@@ -15,11 +15,11 @@ Lightweight and totally customizable. Create and present it the way you do with 
 | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_light.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_dark.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Custom_header_light.png" width="250"> |
 
 ## Features
-
 - [x] Using closures to configure actions
 - [x] Action with optional icon and accessory view
 - [x] Handling touch on accessory view
 - [x] Separate long action list in sections
+- [x] Using closures to callback when controller is about to dismiss
 - [x] 2 built-in themes: light & dark
 - [x] Customizable header
 
@@ -88,6 +88,17 @@ materialActionSheetController.theme = MaterialActionSheetTheme.dark()
 let imageView = UIImageView(image: UIImage(named: "myimage"))
 imageView.bounds = CGRect(origin: CGPoint.zero, size: CGSize(width: 300, height: 100))
 materialActionSheetController.customHeaderView = imageView
+
+// Handler on "will dismiss" and "did dismiss" event
+materialActionSheetController.willDismiss = { [unowned self] in
+    print("I will dismiss.")
+    self.doSomething()
+}
+
+materialActionSheetController.didDismiss = { [unowned self] in
+    print("I did dismiss.")
+    self.doSomething()
+}
 
 presentViewController(materialActionSheetController, animated: true, completion: nil)
 ```

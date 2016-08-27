@@ -114,6 +114,16 @@ final class ExampleViewController: UITableViewController {
         
         materialActionSheetController.theme = theme
         
+        materialActionSheetController.willDismiss = { [unowned self] in
+            print("I will dismiss.")
+            self.doSomething()
+        }
+        
+        materialActionSheetController.didDismiss = { [unowned self] in
+            print("I did dismiss.")
+            self.doSomething()
+        }
+        
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
@@ -136,6 +146,16 @@ final class ExampleViewController: UITableViewController {
         let imageView = UIImageView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.mainScreen().bounds.width, height: 150)))
         imageView.image = UIImage(named: "Trap")
         materialActionSheetController.customHeaderView = imageView
+        
+        materialActionSheetController.willDismiss = { [unowned self] in
+            print("I will dismiss.")
+            self.doSomething()
+        }
+        
+        materialActionSheetController.didDismiss = { [unowned self] in
+            print("I did dismiss.")
+            self.doSomething()
+        }
         
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
@@ -170,6 +190,17 @@ final class ExampleViewController: UITableViewController {
         
         let materialActionSheetController = MaterialActionSheetController(title: nil, message: nil, actionSections: [infoAction, commentAction], [lightBulbAction])
         materialActionSheetController.theme = theme
+        
+        materialActionSheetController.willDismiss = { [unowned self] in
+            print("I will dismiss.")
+            self.doSomething()
+        }
+        
+        materialActionSheetController.didDismiss = { [unowned self] in
+            print("I did dismiss.")
+            self.doSomething()
+        }
+        
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     
@@ -185,6 +216,17 @@ final class ExampleViewController: UITableViewController {
         
         let materialActionSheetController = MaterialActionSheetController(title: nil, message: nil, actionSections: [infoAction, commentAction])
         materialActionSheetController.theme = theme
+        
+        materialActionSheetController.willDismiss = { [unowned self] in
+            print("I will dismiss.")
+            self.doSomething()
+        }
+        
+        materialActionSheetController.didDismiss = { [unowned self] in
+            print("I did dismiss.")
+            self.doSomething()
+        }
+        
         presentViewController(materialActionSheetController, animated: true, completion: nil)
     }
     

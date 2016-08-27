@@ -8,16 +8,16 @@
 import Foundation
 
 // MARK: Action
-public typealias handlerWithAccessoryView = (accessoryView: UIView?) -> Void
+public typealias HandlerWithAccessoryView = (accessoryView: UIView?) -> Void
 public struct MaterialAction {
     public let icon: UIImage?
     public let title: String
-    public let handler: handlerWithAccessoryView?
+    public let handler: HandlerWithAccessoryView?
     public let accessoryView: UIView?
-    public let accessoryHandler: handlerWithAccessoryView?
+    public let accessoryHandler: HandlerWithAccessoryView?
     public let dismissOnAccessoryTouch: Bool?
     
-    public init(icon icon: UIImage?, title: String, handler: handlerWithAccessoryView?, accessoryView: UIView? = nil, dismissOnAccessoryTouch: Bool? = true, accessoryHandler: handlerWithAccessoryView? = nil) {
+    public init(icon icon: UIImage?, title: String, handler: HandlerWithAccessoryView?, accessoryView: UIView? = nil, dismissOnAccessoryTouch: Bool? = true, accessoryHandler: HandlerWithAccessoryView? = nil) {
         self.icon = icon
         self.title = title
         self.handler = handler
@@ -33,52 +33,53 @@ public struct MaterialActionSheetTheme {
     public var backgroundColor: UIColor = UIColor.whiteColor()
     public var animationDuration: NSTimeInterval = 0.25
     
-    // TitleLabel
-    public var titleFont: UIFont {
+    // Header's title label
+    public var headerTitleFont: UIFont {
         let fontDescriptiptor = UIFontDescriptor().fontDescriptorWithSymbolicTraits(.TraitBold)
         return UIFont(descriptor: fontDescriptiptor, size: 15)
     }
-    public var titleColor: UIColor = UIColor.blackColor()
-    public var titleAlignment: NSTextAlignment = .Center
+    public var headerTitleColor: UIColor = UIColor.blackColor()
+    public var headerTitleAlignment: NSTextAlignment = .Center
     
-    // MessageLabel
-    public var messageFont: UIFont = UIFont.systemFontOfSize(12)
-    public var messageColor: UIColor = UIColor.darkGrayColor()
-    public var messageAlignment: NSTextAlignment = .Center
+    // Header's message label
+    public var headerMessageFont: UIFont = UIFont.systemFontOfSize(12)
+    public var headerMessageColor: UIColor = UIColor.darkGrayColor()
+    public var headerMessageAlignment: NSTextAlignment = .Center
     
     // TextLabel
     public var textFont: UIFont = UIFont.systemFontOfSize(13)
     public var textColor: UIColor = UIColor.darkGrayColor()
+    public var textAlignment: NSTextAlignment = .Left
     
-    /// Action's title will be truncated if this is false
+    /// Long text will be truncated if this is false
     public var wrapText: Bool = true
     
     // IconImageView
     public var iconSize: CGSize = CGSize(width: 15, height: 15)
-    public var iconTemplateColor: UIColor = UIColor.darkGrayColor()
     /// This will treat your icon as a template and apply iconColor on it. Default is true
     public var useIconImageAsTemplate: Bool = true
+    public var iconTemplateColor: UIColor = UIColor.darkGrayColor()
+    
+    /// Maximum action sheet height
     public var maxHeight: CGFloat = UIScreen.mainScreen().bounds.height*3/4
     public var separatorColor: UIColor = UIColor.lightGrayColor().colorWithAlphaComponent(0.5)
     /// In case there is no header (title and message are both nil)
     public var firstSectionIsHeader: Bool = false
     
-    
-    // Singleton variable
+    // Singleton
     private static var currentTheme = MaterialActionSheetTheme()
     
     public static func light() -> MaterialActionSheetTheme {
         // Default is light, no need to modify
-        var lightTheme = MaterialActionSheetTheme()
-        return lightTheme
+        return MaterialActionSheetTheme()
     }
     
     public static func dark() -> MaterialActionSheetTheme {
         var darkTheme = MaterialActionSheetTheme()
         darkTheme.dimBackgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.6)
         darkTheme.backgroundColor = UIColor.darkGrayColor()
-        darkTheme.titleColor = UIColor.whiteColor()
-        darkTheme.messageColor = UIColor.whiteColor()
+        darkTheme.headerTitleColor = UIColor.whiteColor()
+        darkTheme.headerMessageColor = UIColor.whiteColor()
         darkTheme.textColor = UIColor.whiteColor()
         darkTheme.iconTemplateColor = UIColor.whiteColor()
         return darkTheme
@@ -103,21 +104,19 @@ public final class MaterialActionSheetController: UIViewController {
     private var dimBackgroundView = UIView()
     private let tableView = UITableView(frame: UIScreen.mainScreen().bounds, style: .Plain)
     
-    private var _title: String?
-    private var message: String?
+    private var headerTitle: String?
+    private var headerMessage: String?
     private var noHeader: Bool {
-        return _title == nil && message == nil
+        return headerTitle == nil && headerMessage == nil
     }
     private var actionSections: [[MaterialAction]] = []
     
-    /// If title and message are both nil, header is omitted
+    /// If header's title and message are both nil, header is omitted
     public convenience init(title title: String?, message: String?, actionSections: [MaterialAction]...) {
         self.init()
-        self._title = title
-        self.message = message
-        for actionSection in actionSections {
-            self.actionSections.append(actionSection)
-        }
+        self.headerTitle = title
+        self.headerMessage = message
+        self.actionSections = actionSections
     }
     
     private init() {
@@ -163,7 +162,7 @@ public final class MaterialActionSheetController: UIViewController {
         }
     }
     
-    private func dismiss(completion: (() -> Void)? = nil) {
+    private func dismiss() {
         willDismiss?()
         UIView.animateWithDuration(theme.animationDuration, animations: {[unowned self] in
             self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height)
@@ -171,8 +170,7 @@ public final class MaterialActionSheetController: UIViewController {
         }) { [unowned self] (finished) in
             self.tableView.removeFromSuperview()
             self.dimBackgroundView.removeFromSuperview()
-            self.dismissViewControllerAnimated(true, completion: {
-                completion?()
+            self.dismissViewControllerAnimated(false, completion: {
                 self.didDismiss?()
             })
         }
@@ -215,7 +213,6 @@ public final class MaterialActionSheetController: UIViewController {
 }
 
 // MARK: UITableViewDataSource
-/// 
 extension MaterialActionSheetController: UITableViewDataSource {
     public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         if noHeader {
@@ -226,11 +223,9 @@ extension MaterialActionSheetController: UITableViewDataSource {
     }
     
     public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if noHeader {
-            // Without header
+        if noHeader { // Without header
             return actionSections[section].count
-        } else {
-            // With header
+        } else { // With header
             if section == 0 {
                 return 1
             } else {
@@ -239,10 +234,10 @@ extension MaterialActionSheetController: UITableViewDataSource {
         }
     }
     
-    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell { // With header
         if !noHeader && indexPath.section == 0 {
             let headerCell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetHeaderTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetHeaderTableViewCell
-            headerCell.bind(title: _title, message: message)
+            headerCell.bind(title: headerTitle, message: headerMessage)
             return headerCell
         }
         
@@ -258,8 +253,8 @@ extension MaterialActionSheetController: UITableViewDataSource {
         
         cell.onTapAccessoryView = { [unowned self] in
             action.accessoryHandler?(accessoryView: action.accessoryView)
-            if
-                let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
+            
+            if let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
                 where dismissOnAccessoryTouch == true {
                 self.dismiss()
             }
@@ -273,7 +268,8 @@ extension MaterialActionSheetController: UITableViewDataSource {
 extension MaterialActionSheetController: UITableViewDelegate {
     // Selection logic
     public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if noHeader == false && indexPath.section == 0 {
+         // Tap at header does nothing
+        if !noHeader && indexPath.section == 0 {
             return
         }
         
@@ -461,8 +457,8 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         
-        titleLabel.textAlignment = MaterialActionSheetTheme.currentTheme.titleAlignment
-        messageLabel.textAlignment = MaterialActionSheetTheme.currentTheme.messageAlignment
+        titleLabel.textAlignment = MaterialActionSheetTheme.currentTheme.headerTitleAlignment
+        messageLabel.textAlignment = MaterialActionSheetTheme.currentTheme.headerMessageAlignment
         
         contentView.addSubview(titleLabel)
         contentView.addSubview(messageLabel)
@@ -472,8 +468,8 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         // Auto layout titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
-        titleLabel.font = MaterialActionSheetTheme.currentTheme.titleFont
-        titleLabel.textColor = MaterialActionSheetTheme.currentTheme.titleColor
+        titleLabel.font = MaterialActionSheetTheme.currentTheme.headerTitleFont
+        titleLabel.textColor = MaterialActionSheetTheme.currentTheme.headerTitleColor
 
         NSLayoutConstraint(item: titleLabel, attribute: .Leading, relatedBy: .Equal, toItem: contentView, attribute: .LeadingMargin, multiplier: 1, constant: 0).active = true
         NSLayoutConstraint(item: titleLabel, attribute: .Trailing, relatedBy: .Equal, toItem: contentView, attribute: .TrailingMargin, multiplier: 1, constant: 0).active = true
@@ -482,8 +478,8 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         // Auto layout messageLabel
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.numberOfLines = 0
-        messageLabel.font = MaterialActionSheetTheme.currentTheme.messageFont
-        messageLabel.textColor = MaterialActionSheetTheme.currentTheme.messageColor
+        messageLabel.font = MaterialActionSheetTheme.currentTheme.headerMessageFont
+        messageLabel.textColor = MaterialActionSheetTheme.currentTheme.headerMessageColor
         NSLayoutConstraint(item: messageLabel, attribute: .Top, relatedBy: .Equal, toItem: titleLabel, attribute: .BottomMargin, multiplier: 1, constant: 2*margin).active = true
         NSLayoutConstraint(item: messageLabel, attribute: .Trailing, relatedBy: .Equal, toItem: contentView, attribute: .TrailingMargin, multiplier: 1, constant: 0).active = true
         NSLayoutConstraint(item: messageLabel, attribute: .Leading, relatedBy: .Equal, toItem: contentView, attribute: .LeadingMargin, multiplier: 1, constant: 1).active = true
