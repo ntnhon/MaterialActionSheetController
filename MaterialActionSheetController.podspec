@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MaterialActionSheetController'
-  s.version          = '1.0'
+  s.version          = '1.1'
   s.summary          = 'A Google like action sheet for iOS written in Swift.'
 
 # This description is used to generate tags and improve search results.

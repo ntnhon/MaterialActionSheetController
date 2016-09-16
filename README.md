@@ -15,24 +15,25 @@ Lightweight and totally customizable. Create and present it the way you do with 
 | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_light.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Full_option_dark.png" width="250"> | <img src="https://raw.githubusercontent.com/ntnhon/MaterialActionSheetController/6f438d03c118c8e19bac792bdeef9383f0991e67/Screenshots/Custom_header_light.png" width="250"> |
 
 ## Features
-
 - [x] Using closures to configure actions
 - [x] Action with optional icon and accessory view
 - [x] Handling touch on accessory view
 - [x] Separate long action list in sections
+- [x] Using closures to callback when controller is about to dismiss
 - [x] 2 built-in themes: light & dark
 - [x] Customizable header
+- [x] Swift 3 compliant
 
 ## Todos
 
-- Swift 3 compliant
 - Present on iPad as a pop-up
 - Documenting
 
 ## Requirements
 
 - iOS 8.0+
-- Xcode 7.3
+- Xcode 8
+- Swift 3
 
 ## Installation
 
@@ -74,13 +75,24 @@ let lightBulbAction = MaterialAction(
     })
 ```
 ```swift
-// Then create and present your MaterialActionSheetController
+// Then create your MaterialActionSheetController
 // parameter sections is a variadic which take a flexible list of section
 let materialActionSheetController = MaterialActionSheetController(
         title: "A nice title",
         message: "A friendly message",
         actionSections: [aCoolAction, anotherCoolAction], [cancelAction])
+```
 
+```swift
+// Or create 
+let materialActionSheetController = MaterialActionSheetController()
+materialActionSheetController.title = "A nice title"
+materialActionSheetController.message = "A friendly message"
+materialActionSheetController.actionSections.append([aCoolAction, anotherCoolAction])
+materialActionSheetController.actionSections.append([cancelAction])
+```
+
+```swift
 // Customize theme
 materialActionSheetController.theme = MaterialActionSheetTheme.dark()
 
@@ -88,6 +100,18 @@ materialActionSheetController.theme = MaterialActionSheetTheme.dark()
 let imageView = UIImageView(image: UIImage(named: "myimage"))
 imageView.bounds = CGRect(origin: CGPoint.zero, size: CGSize(width: 300, height: 100))
 materialActionSheetController.customHeaderView = imageView
+
+// Handler on "will dismiss" and "did dismiss" event
+materialActionSheetController.willDismiss = { [unowned self] in
+    print("I will dismiss.")
+    self.doSomething()
+}
+
+// Finally present it
+materialActionSheetController.didDismiss = { [unowned self] in
+    print("I did dismiss.")
+    self.doSomething()
+}
 
 presentViewController(materialActionSheetController, animated: true, completion: nil)
 ```
