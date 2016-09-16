@@ -11,20 +11,20 @@ import MaterialActionSheetController
 
 final class ExampleViewController: UITableViewController {
     
-    private let lightTheme = MaterialActionSheetTheme.light()
-    private let darkTheme = MaterialActionSheetTheme.dark()
+    fileprivate let lightTheme = MaterialActionSheetTheme.light()
+    fileprivate let darkTheme = MaterialActionSheetTheme.dark()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset.top = 20
     }
     
-    private func doSomething() {
+    fileprivate func doSomething() {
         // Dummy function
         print("I've done something.\n")
     }
     
-    private func fullOption(theme theme: MaterialActionSheetTheme) {
+    fileprivate func fullOption(theme: MaterialActionSheetTheme) {
         // Section Info
         let infoAction = MaterialAction(
             icon: UIImage(named: "Info"),
@@ -58,7 +58,7 @@ final class ExampleViewController: UITableViewController {
             accessoryView: UISwitch(),
             dismissOnAccessoryTouch: false) { [unowned self] (accessoryView) in
                 if let lightBulbSwitch = accessoryView as? UISwitch {
-                    if lightBulbSwitch.on {
+                    if lightBulbSwitch.isOn {
                         print("Light is ON!\n")
                     } else {
                         print("Light is OFF!\n")
@@ -68,7 +68,7 @@ final class ExampleViewController: UITableViewController {
         }
 
         // Section color
-        let greenView = dummyColorView(UIColor.greenColor())
+        let greenView = dummyColorView(UIColor.green)
         let greenAction = MaterialAction(
             icon: UIImage(named: "Info"),
             title: "Green means you can go ahead",
@@ -81,7 +81,7 @@ final class ExampleViewController: UITableViewController {
                 self.doSomething()
         })
         
-        let yellowColor = dummyColorView(UIColor.yellowColor())
+        let yellowColor = dummyColorView(UIColor.yellow)
         let yellowAction = MaterialAction(
             icon: UIImage(named: "Info"),
             title: "Yellow means you should go faster",
@@ -94,7 +94,7 @@ final class ExampleViewController: UITableViewController {
                 self.doSomething()
         })
         
-        let redView = dummyColorView(UIColor.redColor())
+        let redView = dummyColorView(UIColor.red)
         let redAction = MaterialAction(
             icon: UIImage(named: "Info"),
             title: "Move you arse",
@@ -111,7 +111,7 @@ final class ExampleViewController: UITableViewController {
             title: "Material action sheet controller",
             message: "A Google like action sheet controller. Create and use it the way you do with UIAlertController.",
             actionSections: [infoAction], [addCommentAction, menuAction], [lightBulbAction], [greenAction, yellowAction, redAction])
-        
+
         materialActionSheetController.theme = theme
         
         materialActionSheetController.willDismiss = { [unowned self] in
@@ -124,10 +124,10 @@ final class ExampleViewController: UITableViewController {
             self.doSomething()
         }
         
-        presentViewController(materialActionSheetController, animated: true, completion: nil)
+        present(materialActionSheetController, animated: true, completion: nil)
     }
     
-    private func customHeader(theme theme: MaterialActionSheetTheme) {
+    fileprivate func customHeader(theme: MaterialActionSheetTheme) {
         let thankAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Thanks for the heads up!", handler: { [unowned self] (accessoryView) in
             self.doSomething()
         })
@@ -143,7 +143,7 @@ final class ExampleViewController: UITableViewController {
         
         materialActionSheetController.theme = theme
         
-        let imageView = UIImageView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.mainScreen().bounds.width, height: 150)))
+        let imageView = UIImageView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: UIScreen.main.bounds.width, height: 150)))
         imageView.image = UIImage(named: "Trap")
         materialActionSheetController.customHeaderView = imageView
         
@@ -157,10 +157,10 @@ final class ExampleViewController: UITableViewController {
             self.doSomething()
         }
         
-        presentViewController(materialActionSheetController, animated: true, completion: nil)
+        present(materialActionSheetController, animated: true, completion: nil)
     }
     
-    private func noHeader(theme theme: MaterialActionSheetTheme) {
+    fileprivate func noHeader(theme: MaterialActionSheetTheme) {
         let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (accessoryView) in
             self.doSomething()
         })
@@ -179,7 +179,7 @@ final class ExampleViewController: UITableViewController {
             accessoryView: UISwitch(),
             dismissOnAccessoryTouch: false) { [unowned self] (accessoryView) in
                 if let lightBulbSwitch = accessoryView as? UISwitch {
-                    if lightBulbSwitch.on {
+                    if lightBulbSwitch.isOn {
                         print("Light is ON!\n")
                     } else {
                         print("Light is OFF!\n")
@@ -201,10 +201,10 @@ final class ExampleViewController: UITableViewController {
             self.doSomething()
         }
         
-        presentViewController(materialActionSheetController, animated: true, completion: nil)
+        present(materialActionSheetController, animated: true, completion: nil)
     }
     
-    private func singleSection(theme theme: MaterialActionSheetTheme) {
+    fileprivate func singleSection(theme: MaterialActionSheetTheme) {
         let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (accessoryView) in
             self.doSomething()
             })
@@ -227,10 +227,10 @@ final class ExampleViewController: UITableViewController {
             self.doSomething()
         }
         
-        presentViewController(materialActionSheetController, animated: true, completion: nil)
+        present(materialActionSheetController, animated: true, completion: nil)
     }
     
-    private func dummyColorView(color: UIColor) -> UIView {
+    fileprivate func dummyColorView(_ color: UIColor) -> UIView {
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 28, height: 28)))
         view.backgroundColor = color
         view.layer.cornerRadius = 14
@@ -239,8 +239,8 @@ final class ExampleViewController: UITableViewController {
 }
 
 extension ExampleViewController {
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        switch (indexPath.section, indexPath.row) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch ((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
         case (0, 0):
             fullOption(theme: lightTheme)
         case (0, 1):

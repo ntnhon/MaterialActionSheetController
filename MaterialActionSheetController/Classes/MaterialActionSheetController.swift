@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: Action
-public typealias HandlerWithAccessoryView = (accessoryView: UIView?) -> Void
+public typealias HandlerWithAccessoryView = (_ accessoryView: UIView?) -> Void
 public struct MaterialAction {
     public let icon: UIImage?
     public let title: String
@@ -17,7 +17,7 @@ public struct MaterialAction {
     public let accessoryHandler: HandlerWithAccessoryView?
     public let dismissOnAccessoryTouch: Bool?
     
-    public init(icon icon: UIImage?, title: String, handler: HandlerWithAccessoryView?, accessoryView: UIView? = nil, dismissOnAccessoryTouch: Bool? = true, accessoryHandler: HandlerWithAccessoryView? = nil) {
+    public init(icon: UIImage?, title: String, handler: HandlerWithAccessoryView?, accessoryView: UIView? = nil, dismissOnAccessoryTouch: Bool? = true, accessoryHandler: HandlerWithAccessoryView? = nil) {
         self.icon = icon
         self.title = title
         self.handler = handler
@@ -29,27 +29,27 @@ public struct MaterialAction {
 
 // MARK: Appearance
 public struct MaterialActionSheetTheme {
-    public var dimBackgroundColor: UIColor = UIColor.blackColor().colorWithAlphaComponent(0.2)
-    public var backgroundColor: UIColor = UIColor.whiteColor()
-    public var animationDuration: NSTimeInterval = 0.25
+    public var dimBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.2)
+    public var backgroundColor: UIColor = UIColor.white
+    public var animationDuration: TimeInterval = 0.25
     
     // Header's title label
     public var headerTitleFont: UIFont {
-        let fontDescriptiptor = UIFontDescriptor().fontDescriptorWithSymbolicTraits(.TraitBold)
-        return UIFont(descriptor: fontDescriptiptor, size: 15)
+        let fontDescriptiptor = UIFontDescriptor().withSymbolicTraits(.traitBold)
+        return UIFont(descriptor: fontDescriptiptor!, size: 15)
     }
-    public var headerTitleColor: UIColor = UIColor.blackColor()
-    public var headerTitleAlignment: NSTextAlignment = .Center
+    public var headerTitleColor: UIColor = UIColor.black
+    public var headerTitleAlignment: NSTextAlignment = .center
     
     // Header's message label
-    public var headerMessageFont: UIFont = UIFont.systemFontOfSize(12)
-    public var headerMessageColor: UIColor = UIColor.darkGrayColor()
-    public var headerMessageAlignment: NSTextAlignment = .Center
+    public var headerMessageFont: UIFont = UIFont.systemFont(ofSize: 12)
+    public var headerMessageColor: UIColor = UIColor.darkGray
+    public var headerMessageAlignment: NSTextAlignment = .center
     
     // TextLabel
-    public var textFont: UIFont = UIFont.systemFontOfSize(13)
-    public var textColor: UIColor = UIColor.darkGrayColor()
-    public var textAlignment: NSTextAlignment = .Left
+    public var textFont: UIFont = UIFont.systemFont(ofSize: 13)
+    public var textColor: UIColor = UIColor.darkGray
+    public var textAlignment: NSTextAlignment = .left
     
     /// Long text will be truncated if this is false
     public var wrapText: Bool = true
@@ -58,16 +58,16 @@ public struct MaterialActionSheetTheme {
     public var iconSize: CGSize = CGSize(width: 15, height: 15)
     /// This will treat your icon as a template and apply iconColor on it. Default is true
     public var useIconImageAsTemplate: Bool = true
-    public var iconTemplateColor: UIColor = UIColor.darkGrayColor()
+    public var iconTemplateColor: UIColor = UIColor.darkGray
     
     /// Maximum action sheet height
-    public var maxHeight: CGFloat = UIScreen.mainScreen().bounds.height*3/4
-    public var separatorColor: UIColor = UIColor.lightGrayColor().colorWithAlphaComponent(0.5)
+    public var maxHeight: CGFloat = UIScreen.main.bounds.height*3/4
+    public var separatorColor: UIColor = UIColor.lightGray.withAlphaComponent(0.5)
     /// In case there is no header (title and message are both nil)
     public var firstSectionIsHeader: Bool = false
     
     // Singleton
-    private static var currentTheme = MaterialActionSheetTheme()
+    fileprivate static var currentTheme = MaterialActionSheetTheme()
     
     public static func light() -> MaterialActionSheetTheme {
         // Default is light, no need to modify
@@ -76,12 +76,12 @@ public struct MaterialActionSheetTheme {
     
     public static func dark() -> MaterialActionSheetTheme {
         var darkTheme = MaterialActionSheetTheme()
-        darkTheme.dimBackgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.6)
-        darkTheme.backgroundColor = UIColor.darkGrayColor()
-        darkTheme.headerTitleColor = UIColor.whiteColor()
-        darkTheme.headerMessageColor = UIColor.whiteColor()
-        darkTheme.textColor = UIColor.whiteColor()
-        darkTheme.iconTemplateColor = UIColor.whiteColor()
+        darkTheme.dimBackgroundColor = UIColor.black.withAlphaComponent(0.6)
+        darkTheme.backgroundColor = UIColor.darkGray
+        darkTheme.headerTitleColor = UIColor.white
+        darkTheme.headerMessageColor = UIColor.white
+        darkTheme.textColor = UIColor.white
+        darkTheme.iconTemplateColor = UIColor.white
         return darkTheme
     }
 }
@@ -100,29 +100,28 @@ public final class MaterialActionSheetController: UIViewController {
     /// Customizable theme, default is light
     public var theme: MaterialActionSheetTheme = MaterialActionSheetTheme.light()
     
-    private let applicationWindow = (UIApplication.sharedApplication().delegate!.window!)!
-    private var dimBackgroundView = UIView()
-    private let tableView = UITableView(frame: UIScreen.mainScreen().bounds, style: .Plain)
+    fileprivate let applicationWindow = (UIApplication.shared.delegate!.window!)!
+    fileprivate var dimBackgroundView = UIView()
+    fileprivate let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
     
-    private var headerTitle: String?
-    private var headerMessage: String?
-    private var noHeader: Bool {
-        return headerTitle == nil && headerMessage == nil
+    public var message: String?
+    fileprivate var noHeader: Bool {
+        return title == nil && message == nil
     }
-    private var actionSections: [[MaterialAction]] = []
+    public var actionSections: [[MaterialAction]] = []
     
     /// If header's title and message are both nil, header is omitted
-    public convenience init(title title: String?, message: String?, actionSections: [MaterialAction]...) {
+    public convenience init(title: String?, message: String?, actionSections: [MaterialAction]...) {
         self.init()
-        self.headerTitle = title
-        self.headerMessage = message
+        self.title = title
+        self.message = message
         self.actionSections = actionSections
     }
     
-    private init() {
+    public init() {
         super.init(nibName: nil, bundle: nil)
-        modalPresentationStyle = UIModalPresentationStyle.Custom
-        modalTransitionStyle = UIModalTransitionStyle.CrossDissolve
+        modalPresentationStyle = UIModalPresentationStyle.custom
+        modalTransitionStyle = UIModalTransitionStyle.crossDissolve
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -136,72 +135,78 @@ public final class MaterialActionSheetController: UIViewController {
         addTableView()
     }
     
-    public override func viewWillAppear(animated: Bool) {
+    public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIView.animateWithDuration(theme.animationDuration) { [unowned self] in
+        animateAddTable()
+    }
+    
+    fileprivate func animateAddTable() {
+        UIView.animate(withDuration: theme.animationDuration, animations: { [unowned self] in
             
             if self.tableView.contentSize.height <= self.theme.maxHeight {
                 self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height - self.tableView.contentSize.height)
             } else {
                 self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height - self.theme.maxHeight)
             }
-        }
+        }) 
+        
+        
     }
-    
+
     deinit {
         tableView.removeObserver(self, forKeyPath: "contentSize")
     }
     
-    override public func observeValueForKeyPath(keyPath: String?, ofObject object: AnyObject?, change: [String : AnyObject]?, context: UnsafeMutablePointer<Void>) {
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if tableView.contentSize.height <= theme.maxHeight {
             tableView.frame.size = tableView.contentSize
-            tableView.scrollEnabled = false
+            tableView.isScrollEnabled = false
         } else {
             tableView.frame.size = CGSize(width: tableView.frame.width, height: theme.maxHeight)
-            tableView.scrollEnabled = true
+            tableView.isScrollEnabled = true
         }
     }
     
-    private func dismiss() {
+    fileprivate func dismiss() {
         willDismiss?()
-        UIView.animateWithDuration(theme.animationDuration, animations: {[unowned self] in
+        UIView.animate(withDuration: theme.animationDuration, animations: {[unowned self] in
             self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height)
             self.dimBackgroundView.alpha = 0
-        }) { [unowned self] (finished) in
+        }, completion: { [unowned self] (finished) in
             self.tableView.removeFromSuperview()
             self.dimBackgroundView.removeFromSuperview()
-            self.dismissViewControllerAnimated(false, completion: {
+            self.dismiss(animated: false, completion: {
                 self.didDismiss?()
             })
-        }
+        }) 
     }
     
     // Dim background
-    private func addDimBackgroundView() {
+    fileprivate func addDimBackgroundView() {
         dimBackgroundView = UIView(frame: applicationWindow.frame)
         dimBackgroundView.backgroundColor = theme.dimBackgroundColor
         let tap = UITapGestureRecognizer(target: self, action: #selector(MaterialActionSheetController.dimBackgroundViewTapped))
-        dimBackgroundView.userInteractionEnabled = true
+        dimBackgroundView.isUserInteractionEnabled = true
         dimBackgroundView.addGestureRecognizer(tap)
         applicationWindow.addSubview(dimBackgroundView)
         dimBackgroundView.alpha = 0
-        UIView.animateWithDuration(theme.animationDuration) { [unowned self] in
+        UIView.animate(withDuration: theme.animationDuration, animations: { [unowned self] in
             self.dimBackgroundView.alpha = 1
-        }
+        }) 
     }
     
-    @objc private func dimBackgroundViewTapped() {
+    @objc fileprivate func dimBackgroundViewTapped() {
         dismiss()
     }
     
     // TableView
-    private func addTableView() {
+    fileprivate func addTableView() {
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.separatorColor = UIColor.clearColor()
-        tableView.addObserver(self, forKeyPath: "contentSize", options: NSKeyValueObservingOptions.New, context: nil)
-        tableView.registerClass(MaterialActionSheetTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetTableViewCell.self)")
-        tableView.registerClass(MaterialActionSheetHeaderTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetHeaderTableViewCell.self)")
+        tableView.separatorColor = UIColor.clear
+        tableView.addObserver(self, forKeyPath: "contentSize", options: NSKeyValueObservingOptions.new, context: nil)
+        tableView.register(MaterialActionSheetTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetTableViewCell.self)")
+        tableView.register(MaterialActionSheetHeaderTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetHeaderTableViewCell.self)")
         tableView.frame.origin = CGPoint(x: 0, y: applicationWindow.frame.height)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableViewAutomaticDimension
@@ -214,7 +219,7 @@ public final class MaterialActionSheetController: UIViewController {
 
 // MARK: UITableViewDataSource
 extension MaterialActionSheetController: UITableViewDataSource {
-    public func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    public func numberOfSections(in tableView: UITableView) -> Int {
         if noHeader {
             return actionSections.count
         }
@@ -222,7 +227,7 @@ extension MaterialActionSheetController: UITableViewDataSource {
         return actionSections.count + 1
     }
     
-    public func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if noHeader { // Without header
             return actionSections[section].count
         } else { // With header
@@ -234,28 +239,28 @@ extension MaterialActionSheetController: UITableViewDataSource {
         }
     }
     
-    public func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell { // With header
-        if !noHeader && indexPath.section == 0 {
-            let headerCell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetHeaderTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetHeaderTableViewCell
-            headerCell.bind(title: headerTitle, message: headerMessage)
+    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { // With header
+        if !noHeader && (indexPath as NSIndexPath).section == 0 {
+            let headerCell = tableView.dequeueReusableCell(withIdentifier: "\(MaterialActionSheetHeaderTableViewCell.self)", for: indexPath) as! MaterialActionSheetHeaderTableViewCell
+            headerCell.bind(title: title, message: message)
             return headerCell
         }
         
         var action: MaterialAction
         if noHeader {
-            action = actionSections[indexPath.section][indexPath.row]
+            action = actionSections[(indexPath as NSIndexPath).section][(indexPath as NSIndexPath).row]
         } else {
-            action = actionSections[indexPath.section - 1][indexPath.row]
+            action = actionSections[(indexPath as NSIndexPath).section - 1][(indexPath as NSIndexPath).row]
         }
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("\(MaterialActionSheetTableViewCell.self)", forIndexPath: indexPath) as! MaterialActionSheetTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "\(MaterialActionSheetTableViewCell.self)", for: indexPath) as! MaterialActionSheetTableViewCell
         cell.bind(action: action)
         
         cell.onTapAccessoryView = { [unowned self] in
-            action.accessoryHandler?(accessoryView: action.accessoryView)
+            action.accessoryHandler?(action.accessoryView)
             
             if let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
-                where dismissOnAccessoryTouch == true {
+                , dismissOnAccessoryTouch == true {
                 self.dismiss()
             }
         }
@@ -267,25 +272,25 @@ extension MaterialActionSheetController: UITableViewDataSource {
 // MARK: UITableViewDelegate
 extension MaterialActionSheetController: UITableViewDelegate {
     // Selection logic
-    public func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
          // Tap at header does nothing
-        if !noHeader && indexPath.section == 0 {
+        if !noHeader && (indexPath as NSIndexPath).section == 0 {
             return
         }
         
         var action: MaterialAction
         if noHeader {
-            action = actionSections[indexPath.section][indexPath.row]
+            action = actionSections[(indexPath as NSIndexPath).section][(indexPath as NSIndexPath).row]
         } else {
-            action = actionSections[indexPath.section - 1][indexPath.row]
+            action = actionSections[(indexPath as NSIndexPath).section - 1][(indexPath as NSIndexPath).row]
         }
         
-        action.handler?(accessoryView: action.accessoryView)
+        action.handler?(action.accessoryView)
         dismiss()
     }
     
     // Add separator between sections
-    public func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if let customHeaderView = customHeaderView {
             return customHeaderView.bounds.height
         }
@@ -293,11 +298,11 @@ extension MaterialActionSheetController: UITableViewDelegate {
         return 1
     }
     
-    public func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 1
     }
     
-    public func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if let customHeaderView = customHeaderView {
             return customHeaderView
         }
@@ -305,10 +310,10 @@ extension MaterialActionSheetController: UITableViewDelegate {
         return emptyView()
     }
     
-    public func tableView(tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         
         // Last section doesn't have separator
-        if numberOfSectionsInTableView(tableView) == (section + 1) {
+        if numberOfSections(in: tableView) == (section + 1) {
             return emptyView()
         }
         
@@ -320,19 +325,19 @@ extension MaterialActionSheetController: UITableViewDelegate {
         return shortSeparatorView()
     }
     
-    private func emptyView() -> UIView {
+    fileprivate func emptyView() -> UIView {
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
         view.backgroundColor = theme.backgroundColor
         return view
     }
     
-    private func longSeparatorView() -> UIView {
+    fileprivate func longSeparatorView() -> UIView {
         let lineView = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
         lineView.backgroundColor = theme.separatorColor
         return lineView
     }
     
-    private func shortSeparatorView() -> UIView {
+    fileprivate func shortSeparatorView() -> UIView {
         let separatorLeadingSpace = 2 * 16 + theme.iconSize.width // 2 * margin + icon's width
         
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
@@ -348,17 +353,17 @@ extension MaterialActionSheetController: UITableViewDelegate {
 
 // MARK: Cells
 private final class MaterialActionSheetTableViewCell: UITableViewCell {
-    private var iconImageView = UIImageView()
-    private var titleLabel = UILabel()
-    private var customAccessoryView = UIView()
-    private var customAccessoryViewWidthConstraint: NSLayoutConstraint!
-    private var customAccessoryViewHeightConstraint: NSLayoutConstraint!
+    fileprivate var iconImageView = UIImageView()
+    fileprivate var titleLabel = UILabel()
+    fileprivate var customAccessoryView = UIView()
+    fileprivate var customAccessoryViewWidthConstraint: NSLayoutConstraint!
+    fileprivate var customAccessoryViewHeightConstraint: NSLayoutConstraint!
     
     var onTapAccessoryView: (() -> Void)?
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .None
+        selectionStyle = .none
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         iconImageView.tintColor = MaterialActionSheetTheme.currentTheme.iconTemplateColor
@@ -369,10 +374,10 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         
         // Auto layout iconImageView
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint(item: iconImageView, attribute: .Leading, relatedBy: .Equal, toItem: contentView, attribute: .LeadingMargin, multiplier: 1, constant: 0).active = true
-        NSLayoutConstraint(item: iconImageView, attribute: .CenterY, relatedBy: .Equal, toItem: contentView, attribute: .CenterY, multiplier: 1, constant: 0).active = true
-        NSLayoutConstraint(item: iconImageView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .Width, multiplier: 1, constant: MaterialActionSheetTheme.currentTheme.iconSize.width).active = true
-        NSLayoutConstraint(item: iconImageView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .Height, multiplier: 1, constant: MaterialActionSheetTheme.currentTheme.iconSize.height).active = true
+        NSLayoutConstraint(item: iconImageView, attribute: .leading, relatedBy: .equal, toItem: contentView, attribute: .leadingMargin, multiplier: 1, constant: 0).isActive = true
+        NSLayoutConstraint(item: iconImageView, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
+        NSLayoutConstraint(item: iconImageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: MaterialActionSheetTheme.currentTheme.iconSize.width).isActive = true
+        NSLayoutConstraint(item: iconImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: MaterialActionSheetTheme.currentTheme.iconSize.height).isActive = true
         
         // Auto layout titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -383,31 +388,31 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         }
         titleLabel.font = MaterialActionSheetTheme.currentTheme.textFont
         titleLabel.textColor = MaterialActionSheetTheme.currentTheme.textColor
-        NSLayoutConstraint(item: titleLabel, attribute: .Leading, relatedBy: .Equal, toItem: iconImageView, attribute: .Trailing, multiplier: 1, constant: 15).active = true
-        NSLayoutConstraint(item: titleLabel, attribute: .Trailing, relatedBy: .Equal, toItem: customAccessoryView, attribute: .LeadingMargin, multiplier: 1, constant: 0).active = true
-        NSLayoutConstraint(item: titleLabel, attribute: .CenterY, relatedBy: .Equal, toItem: contentView, attribute: .CenterY, multiplier: 1, constant: 0).active = true
-        NSLayoutConstraint(item: titleLabel, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: 10).active = true
-        NSLayoutConstraint(item: titleLabel, attribute: .Bottom, relatedBy: .Equal, toItem: contentView, attribute: .Bottom, multiplier: 1, constant: -10).active = true
+        NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .equal, toItem: iconImageView, attribute: .trailing, multiplier: 1, constant: 15).isActive = true
+        NSLayoutConstraint(item: titleLabel, attribute: .trailing, relatedBy: .equal, toItem: customAccessoryView, attribute: .leadingMargin, multiplier: 1, constant: 0).isActive = true
+        NSLayoutConstraint(item: titleLabel, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
+        NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 10).isActive = true
+        NSLayoutConstraint(item: titleLabel, attribute: .bottom, relatedBy: .equal, toItem: contentView, attribute: .bottom, multiplier: 1, constant: -10).isActive = true
         
         // Auto layout customAccessoryView
         customAccessoryView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint(item: customAccessoryView, attribute: .Trailing, relatedBy: .Equal, toItem: contentView, attribute: .Trailing, multiplier: 1, constant: -10).active = true
-        NSLayoutConstraint(item: customAccessoryView, attribute: .CenterY, relatedBy: .Equal, toItem: contentView, attribute: .CenterY, multiplier: 1, constant: 0).active = true
+        NSLayoutConstraint(item: customAccessoryView, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailing, multiplier: 1, constant: -10).isActive = true
+        NSLayoutConstraint(item: customAccessoryView, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
         
-        customAccessoryViewWidthConstraint = NSLayoutConstraint(item: customAccessoryView, attribute: .Width, relatedBy: .Equal, toItem: nil, attribute: .Width, multiplier: 1, constant: 0)
-        customAccessoryViewWidthConstraint.active = true
+        customAccessoryViewWidthConstraint = NSLayoutConstraint(item: customAccessoryView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 0)
+        customAccessoryViewWidthConstraint.isActive = true
         
-        customAccessoryViewHeightConstraint = NSLayoutConstraint(item: customAccessoryView, attribute: .Height, relatedBy: .Equal, toItem: nil, attribute: .Height, multiplier: 1, constant: 0)
-        customAccessoryViewHeightConstraint.active = true
+        customAccessoryViewHeightConstraint = NSLayoutConstraint(item: customAccessoryView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 0)
+        customAccessoryViewHeightConstraint.isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func bind(action action: MaterialAction) {
+    func bind(action: MaterialAction) {
         if MaterialActionSheetTheme.currentTheme.useIconImageAsTemplate {
-            iconImageView.image = action.icon?.imageWithRenderingMode(.AlwaysTemplate)
+            iconImageView.image = action.icon?.withRenderingMode(.alwaysTemplate)
         } else {
             iconImageView.image = action.icon
         }
@@ -419,10 +424,10 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
             
             
             if let accessoryView = accessoryView as? UIControl {
-                accessoryView.addTarget(self, action: #selector(MaterialActionSheetTableViewCell.accessoryViewTapped), forControlEvents: [.TouchUpInside])
+                accessoryView.addTarget(self, action: #selector(MaterialActionSheetTableViewCell.accessoryViewTapped), for: [.touchUpInside])
             } else {
                 let accessoryTap = UITapGestureRecognizer(target: self, action: #selector(MaterialActionSheetTableViewCell.accessoryViewTapped))
-                accessoryView.userInteractionEnabled = true
+                accessoryView.isUserInteractionEnabled = true
                 accessoryView.addGestureRecognizer(accessoryTap)
             }
             
@@ -430,7 +435,7 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         }
     }
     
-    private override func prepareForReuse() {
+    fileprivate override func prepareForReuse() {
         super.prepareForReuse()
         // Clean iconImageView and customAccessoryView
         iconImageView.image = nil
@@ -442,18 +447,18 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         customAccessoryViewHeightConstraint.constant = 0
     }
     
-    @objc private func accessoryViewTapped() {
+    @objc fileprivate func accessoryViewTapped() {
         onTapAccessoryView?()
     }
 }
 
 private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
-    private var titleLabel = UILabel()
-    private var messageLabel = UILabel()
+    fileprivate var titleLabel = UILabel()
+    fileprivate var messageLabel = UILabel()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        selectionStyle = .None
+        selectionStyle = .none
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         
@@ -471,26 +476,26 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         titleLabel.font = MaterialActionSheetTheme.currentTheme.headerTitleFont
         titleLabel.textColor = MaterialActionSheetTheme.currentTheme.headerTitleColor
 
-        NSLayoutConstraint(item: titleLabel, attribute: .Leading, relatedBy: .Equal, toItem: contentView, attribute: .LeadingMargin, multiplier: 1, constant: 0).active = true
-        NSLayoutConstraint(item: titleLabel, attribute: .Trailing, relatedBy: .Equal, toItem: contentView, attribute: .TrailingMargin, multiplier: 1, constant: 0).active = true
-        NSLayoutConstraint(item: titleLabel, attribute: .Top, relatedBy: .Equal, toItem: contentView, attribute: .Top, multiplier: 1, constant: margin).active = true
+        NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .equal, toItem: contentView, attribute: .leadingMargin, multiplier: 1, constant: 0).isActive = true
+        NSLayoutConstraint(item: titleLabel, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailingMargin, multiplier: 1, constant: 0).isActive = true
+        NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: margin).isActive = true
         
         // Auto layout messageLabel
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.numberOfLines = 0
         messageLabel.font = MaterialActionSheetTheme.currentTheme.headerMessageFont
         messageLabel.textColor = MaterialActionSheetTheme.currentTheme.headerMessageColor
-        NSLayoutConstraint(item: messageLabel, attribute: .Top, relatedBy: .Equal, toItem: titleLabel, attribute: .BottomMargin, multiplier: 1, constant: 2*margin).active = true
-        NSLayoutConstraint(item: messageLabel, attribute: .Trailing, relatedBy: .Equal, toItem: contentView, attribute: .TrailingMargin, multiplier: 1, constant: 0).active = true
-        NSLayoutConstraint(item: messageLabel, attribute: .Leading, relatedBy: .Equal, toItem: contentView, attribute: .LeadingMargin, multiplier: 1, constant: 1).active = true
-        NSLayoutConstraint(item: messageLabel, attribute: .Bottom, relatedBy: .Equal, toItem: contentView, attribute: .BottomMargin, multiplier: 1, constant: 0).active = true
+        NSLayoutConstraint(item: messageLabel, attribute: .top, relatedBy: .equal, toItem: titleLabel, attribute: .bottomMargin, multiplier: 1, constant: 2*margin).isActive = true
+        NSLayoutConstraint(item: messageLabel, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailingMargin, multiplier: 1, constant: 0).isActive = true
+        NSLayoutConstraint(item: messageLabel, attribute: .leading, relatedBy: .equal, toItem: contentView, attribute: .leadingMargin, multiplier: 1, constant: 1).isActive = true
+        NSLayoutConstraint(item: messageLabel, attribute: .bottom, relatedBy: .equal, toItem: contentView, attribute: .bottomMargin, multiplier: 1, constant: 0).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func bind(title title: String?, message: String?) {
+    func bind(title: String?, message: String?) {
         titleLabel.text = title
         messageLabel.text = message
     }

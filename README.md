@@ -22,17 +22,18 @@ Lightweight and totally customizable. Create and present it the way you do with 
 - [x] Using closures to callback when controller is about to dismiss
 - [x] 2 built-in themes: light & dark
 - [x] Customizable header
+- [x] Swift 3 compliant
 
 ## Todos
 
-- Swift 3 compliant
 - Present on iPad as a pop-up
 - Documenting
 
 ## Requirements
 
 - iOS 8.0+
-- Xcode 7.3
+- Xcode 8
+- Swift 3
 
 ## Installation
 
@@ -74,13 +75,24 @@ let lightBulbAction = MaterialAction(
     })
 ```
 ```swift
-// Then create and present your MaterialActionSheetController
+// Then create your MaterialActionSheetController
 // parameter sections is a variadic which take a flexible list of section
 let materialActionSheetController = MaterialActionSheetController(
         title: "A nice title",
         message: "A friendly message",
         actionSections: [aCoolAction, anotherCoolAction], [cancelAction])
+```
 
+```swift
+// Or create 
+let materialActionSheetController = MaterialActionSheetController()
+materialActionSheetController.title = "A nice title"
+materialActionSheetController.message = "A friendly message"
+materialActionSheetController.actionSections.append([aCoolAction, anotherCoolAction])
+materialActionSheetController.actionSections.append([cancelAction])
+```
+
+```swift
 // Customize theme
 materialActionSheetController.theme = MaterialActionSheetTheme.dark()
 
@@ -95,6 +107,7 @@ materialActionSheetController.willDismiss = { [unowned self] in
     self.doSomething()
 }
 
+// Finally present it
 materialActionSheetController.didDismiss = { [unowned self] in
     print("I did dismiss.")
     self.doSomething()
