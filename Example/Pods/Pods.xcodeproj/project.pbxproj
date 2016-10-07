@@ -16,6 +16,10 @@
 		97C69ED50FD6149F557D54437358E6BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CEC22C73C1608DFA5D5D78BDCB218219 /* Foundation.framework */; };
 		A4C8A055938D80B2F2CE602FC507023D /* Pods-MaterialActionSheetController_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = CF80789A2C587A3E714B8340914DF022 /* Pods-MaterialActionSheetController_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EF95F4EE1D65D36800817BD9 /* MaterialActionSheetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF95F4ED1D65D36800817BD9 /* MaterialActionSheetController.swift */; };
+		EFAC94B01DA7E038005909AE /* MaterialAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC94AF1DA7E037005909AE /* MaterialAction.swift */; };
+		EFAC94B21DA7E078005909AE /* MaterialActionSheetTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC94B11DA7E078005909AE /* MaterialActionSheetTheme.swift */; };
+		EFAC94B41DA7E0F1005909AE /* MaterialActionSheetTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC94B31DA7E0F1005909AE /* MaterialActionSheetTableViewCell.swift */; };
+		EFAC94B61DA7E157005909AE /* MaterialActionSheetHeaderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC94B51DA7E157005909AE /* MaterialActionSheetHeaderTableViewCell.swift */; };
 		F4F2123B9CE6676C2990EBFF64265B1B /* MaterialActionSheetController-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7426F4AFAAE55FD918A4953DA2906EDD /* MaterialActionSheetController-dummy.m */; };
 /* End PBXBuildFile section */
 
@@ -60,6 +64,10 @@
 		E48E8F049497C4595E3834785E9456EC /* Pods-MaterialActionSheetController_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-MaterialActionSheetController_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		E5C5D2FAD4F843DA72A4C345A9D0D7DC /* Pods-MaterialActionSheetController_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = "Pods-MaterialActionSheetController_Example.modulemap"; sourceTree = "<group>"; };
 		EF95F4ED1D65D36800817BD9 /* MaterialActionSheetController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaterialActionSheetController.swift; sourceTree = "<group>"; };
+		EFAC94AF1DA7E037005909AE /* MaterialAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaterialAction.swift; sourceTree = "<group>"; };
+		EFAC94B11DA7E078005909AE /* MaterialActionSheetTheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaterialActionSheetTheme.swift; sourceTree = "<group>"; };
+		EFAC94B31DA7E0F1005909AE /* MaterialActionSheetTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaterialActionSheetTableViewCell.swift; sourceTree = "<group>"; };
+		EFAC94B51DA7E157005909AE /* MaterialActionSheetHeaderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MaterialActionSheetHeaderTableViewCell.swift; sourceTree = "<group>"; };
 		F47876606459ED1498C0F7C51F8E5EB7 /* Pods-MaterialActionSheetController_Example-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-MaterialActionSheetController_Example-dummy.m"; sourceTree = "<group>"; };
 		F807F16947E93939E6D721C58CA3AD14 /* Pods-MaterialActionSheetController_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MaterialActionSheetController_Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -145,6 +153,10 @@
 			isa = PBXGroup;
 			children = (
 				EF95F4ED1D65D36800817BD9 /* MaterialActionSheetController.swift */,
+				EFAC94AF1DA7E037005909AE /* MaterialAction.swift */,
+				EFAC94B11DA7E078005909AE /* MaterialActionSheetTheme.swift */,
+				EFAC94B31DA7E0F1005909AE /* MaterialActionSheetTableViewCell.swift */,
+				EFAC94B51DA7E157005909AE /* MaterialActionSheetHeaderTableViewCell.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -346,7 +358,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				F4F2123B9CE6676C2990EBFF64265B1B /* MaterialActionSheetController-dummy.m in Sources */,
+				EFAC94B61DA7E157005909AE /* MaterialActionSheetHeaderTableViewCell.swift in Sources */,
 				EF95F4EE1D65D36800817BD9 /* MaterialActionSheetController.swift in Sources */,
+				EFAC94B41DA7E0F1005909AE /* MaterialActionSheetTableViewCell.swift in Sources */,
+				EFAC94B21DA7E078005909AE /* MaterialActionSheetTheme.swift in Sources */,
+				EFAC94B01DA7E038005909AE /* MaterialAction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
