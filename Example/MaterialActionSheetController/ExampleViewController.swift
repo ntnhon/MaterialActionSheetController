@@ -31,7 +31,7 @@ final class ExampleViewController: UITableViewController {
         let infoAction = MaterialAction(
             icon: UIImage(named: "Info"),
             title: "Library information",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
         })
         
@@ -39,14 +39,14 @@ final class ExampleViewController: UITableViewController {
         let addCommentAction = MaterialAction(
             icon: UIImage(named: "Comment"),
             title: "Say something about this library",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
         })
         
         let menuAction = MaterialAction(
             icon: UIImage(named: "Menu"),
             title: "This is a very long action title and it is wrapped to multiple lines by default. You can change this behavior by changing theme settings.",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
         })
         
@@ -54,12 +54,12 @@ final class ExampleViewController: UITableViewController {
         let lightBulbAction = MaterialAction(
             icon: UIImage(named: "Light"),
             title: "Edison light bulb will show you how to add and handle UISwitch",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
             },
             accessoryView: UISwitch(),
-            dismissOnAccessoryTouch: false) { [unowned self] (accessoryView) in
-                if let lightBulbSwitch = accessoryView as? UISwitch {
+            dismissOnAccessoryTouch: false) { [unowned self] (action) in
+                if let lightBulbSwitch = action.accessoryView as? UISwitch {
                     if lightBulbSwitch.isOn {
                         print("Light is ON!\n")
                     } else {
@@ -74,12 +74,12 @@ final class ExampleViewController: UITableViewController {
         let greenAction = MaterialAction(
             icon: UIImage(named: "Info"),
             title: "Green means you can go ahead",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
             },
             accessoryView: greenView,
             dismissOnAccessoryTouch: true,
-            accessoryHandler: { [unowned self] (accessoryView) in
+            accessoryHandler: { [unowned self] (action) in
                 self.doSomething()
         })
         
@@ -87,12 +87,12 @@ final class ExampleViewController: UITableViewController {
         let yellowAction = MaterialAction(
             icon: UIImage(named: "Info"),
             title: "Yellow means you should go faster",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
             },
             accessoryView: yellowColor,
             dismissOnAccessoryTouch: true,
-            accessoryHandler: {[unowned self] (accessoryView) in
+            accessoryHandler: {[unowned self] (action) in
                 self.doSomething()
         })
         
@@ -100,11 +100,11 @@ final class ExampleViewController: UITableViewController {
         let redAction = MaterialAction(
             icon: UIImage(named: "Info"),
             title: "Move you arse",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
             },
             accessoryView: redView, dismissOnAccessoryTouch: true,
-            accessoryHandler: { [unowned self] (accessoryView) in
+            accessoryHandler: { [unowned self] (action) in
                 self.doSomething()
         })
         
@@ -128,11 +128,11 @@ final class ExampleViewController: UITableViewController {
     }
     
     fileprivate func customHeader(theme: MaterialActionSheetTheme) {
-        let thankAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Thanks for the heads up!", handler: { [unowned self] (accessoryView) in
+        let thankAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Thanks for the heads up!", handler: { [unowned self] (action) in
             self.doSomething()
         })
         
-        let grewUpAction = MaterialAction(icon: UIImage(named: "Comment"), title: "The child is grown, the dream is gone...", handler: { [unowned self] (accessoryView) in
+        let grewUpAction = MaterialAction(icon: UIImage(named: "Comment"), title: "The child is grown, the dream is gone...", handler: { [unowned self] (action) in
             self.doSomething()
         })
         
@@ -159,24 +159,24 @@ final class ExampleViewController: UITableViewController {
     }
     
     fileprivate func noHeader(theme: MaterialActionSheetTheme) {
-        let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (accessoryView) in
+        let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (action) in
             self.doSomething()
         })
 
         
-        let commentAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment", handler: { [unowned self] (accessoryView) in
+        let commentAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment", handler: { [unowned self] (action) in
             self.doSomething()
         })
         
         let lightBulbAction = MaterialAction(
             icon: UIImage(named: "Light"),
             title: "Edison light bulb will show you how to add and handle UISwitch",
-            handler: { [unowned self] (accessoryView) in
+            handler: { [unowned self] (action) in
                 self.doSomething()
             },
             accessoryView: UISwitch(),
-            dismissOnAccessoryTouch: false) { [unowned self] (accessoryView) in
-                if let lightBulbSwitch = accessoryView as? UISwitch {
+            dismissOnAccessoryTouch: false) { [unowned self] (action) in
+                if let lightBulbSwitch = action.accessoryView as? UISwitch {
                     if lightBulbSwitch.isOn {
                         print("Light is ON!\n")
                     } else {
@@ -201,12 +201,12 @@ final class ExampleViewController: UITableViewController {
     }
     
     fileprivate func singleSection(theme: MaterialActionSheetTheme) {
-        let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (accessoryView) in
+        let infoAction = MaterialAction(icon: UIImage(named: "Info"), title: "Library information", handler: { [unowned self] (action) in
             self.doSomething()
             })
         
         
-        let commentAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment", handler: { [unowned self] (accessoryView) in
+        let commentAction = MaterialAction(icon: UIImage(named: "Comment"), title: "Add comment", handler: { [unowned self] (action) in
             self.doSomething()
             })
         
@@ -234,7 +234,7 @@ final class ExampleViewController: UITableViewController {
 
 extension ExampleViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch ((indexPath as NSIndexPath).section, (indexPath as NSIndexPath).row) {
+        switch (indexPath.section, indexPath.row) {
         case (0, 0):
             fullOption(theme: lightTheme)
         case (0, 1):

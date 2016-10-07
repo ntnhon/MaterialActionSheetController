@@ -177,7 +177,7 @@ extension MaterialActionSheetController: UITableViewDataSource {
         cell.bind(action: action)
         
         cell.onTapAccessoryView = { [unowned self] in
-            action.accessoryHandler?(action.accessoryView)
+            action.accessoryHandler?(action)
             
             if let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
                 , dismissOnAccessoryTouch == true {
@@ -206,7 +206,7 @@ extension MaterialActionSheetController: UITableViewDelegate {
             action = actionSections[indexPath.section - 1][indexPath.row]
         }
         
-        action.handler?(action.accessoryView)
+        action.handler?(action)
         dismiss()
     }
     
