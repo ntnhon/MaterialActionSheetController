@@ -86,7 +86,7 @@ public final class MaterialActionSheetController: UIViewController {
         }
     }
     
-    fileprivate func dismiss() {
+    fileprivate func dismiss(withAction action: MaterialAction? = nil) {
         willDismiss?()
         UIView.animate(withDuration: theme.animationDuration, animations: {[unowned self] in
             self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height)
@@ -95,6 +95,9 @@ public final class MaterialActionSheetController: UIViewController {
             self.tableView.removeFromSuperview()
             self.dimBackgroundView.removeFromSuperview()
             self.dismiss(animated: false, completion: {
+                if let action = action {
+                    action.handler?(action)
+                }
                 self.didDismiss?()
             })
         }) 
@@ -181,7 +184,7 @@ extension MaterialActionSheetController: UITableViewDataSource {
             
             if let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
                 , dismissOnAccessoryTouch == true {
-                self.dismiss()
+                self.dismiss(withAction: action)
             }
         }
         
@@ -205,9 +208,8 @@ extension MaterialActionSheetController: UITableViewDelegate {
         } else {
             action = actionSections[indexPath.section - 1][indexPath.row]
         }
-        
-        action.handler?(action)
-        dismiss()
+
+        dismiss(withAction: action)
     }
     
     // Add separator between sections

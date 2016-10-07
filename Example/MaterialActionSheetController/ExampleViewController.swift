@@ -20,7 +20,7 @@ final class ExampleViewController: UITableViewController {
     }
     
     fileprivate func doSomething() {
-        let dummyAlert = UIAlertController(title: "Alert", message: "Clicked!", preferredStyle: UIAlertControllerStyle.alert)
+        let dummyAlert = UIAlertController(title: "Alert", message: "I did something", preferredStyle: UIAlertControllerStyle.alert)
         let closeButton = UIAlertAction(title: "Close", style: .cancel, handler: nil)
         dummyAlert.addAction(closeButton)
         present(dummyAlert, animated: true, completion: nil)
@@ -121,7 +121,7 @@ final class ExampleViewController: UITableViewController {
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
-            print("I did dismiss.")
+            print("I dismissed")
         }
         
         present(materialActionSheetController, animated: true, completion: nil)
@@ -152,7 +152,7 @@ final class ExampleViewController: UITableViewController {
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
-            print("I did dismiss.")
+            print("I dismissed")
         }
         
         present(materialActionSheetController, animated: true, completion: nil)
@@ -194,7 +194,7 @@ final class ExampleViewController: UITableViewController {
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
-            print("I did dismiss.")
+            print("I dismissed")
         }
         
         present(materialActionSheetController, animated: true, completion: nil)
@@ -218,7 +218,7 @@ final class ExampleViewController: UITableViewController {
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
-            print("I did dismiss.")
+            print("I dismissed")
         }
         
         present(materialActionSheetController, animated: true, completion: nil)
