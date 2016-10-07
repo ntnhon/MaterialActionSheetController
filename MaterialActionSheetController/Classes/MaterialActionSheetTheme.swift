@@ -7,6 +7,7 @@
 import Foundation
 
 public struct MaterialActionSheetTheme {
+    
     public var dimBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.2)
     public var backgroundColor: UIColor = UIColor.white
     public var animationDuration: TimeInterval = 0.25
@@ -62,4 +63,5 @@ public struct MaterialActionSheetTheme {
         darkTheme.iconTemplateColor = UIColor.white
         return darkTheme
     }
+    
 }

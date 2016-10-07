@@ -7,6 +7,7 @@
 import Foundation
 
 public final class MaterialActionSheetController: UIViewController {
+    
     /// Invoked when MaterialActionSheetController is about to dismiss
     public var willDismiss: (() -> Void)?
     
@@ -28,6 +29,7 @@ public final class MaterialActionSheetController: UIViewController {
         return title == nil && message == nil
     }
     public var actionSections: [[MaterialAction]] = []
+    
     
     /// If header's title and message are both nil, header view is omitted
     public convenience init(title: String?, message: String?, actionSections: [MaterialAction]...) {
@@ -122,8 +124,8 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.delegate = self
         tableView.separatorColor = UIColor.clear
         tableView.addObserver(self, forKeyPath: #keyPath(UITableView.contentSize), options: NSKeyValueObservingOptions.new, context: nil)
-        tableView.register(MaterialActionSheetTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetTableViewCell.self)")
-        tableView.register(MaterialActionSheetHeaderTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetHeaderTableViewCell.self)")
+        tableView.register(MaterialActionSheetTableViewCell.self, forCellReuseIdentifier: MaterialActionSheetTableViewCell.reuseIdentifier)
+        tableView.register(MaterialActionSheetHeaderTableViewCell.self, forCellReuseIdentifier: MaterialActionSheetHeaderTableViewCell.reuseIdentifier)
         tableView.frame.origin = CGPoint(x: 0, y: applicationWindow.frame.height)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableViewAutomaticDimension
@@ -132,6 +134,7 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.backgroundColor = theme.backgroundColor
         applicationWindow.addSubview(tableView)
     }
+    
 }
 
 // MARK: UITableViewDataSource
@@ -157,20 +160,20 @@ extension MaterialActionSheetController: UITableViewDataSource {
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell { // With header
-        if !noHeader && (indexPath as NSIndexPath).section == 0 {
-            let headerCell = tableView.dequeueReusableCell(withIdentifier: "\(MaterialActionSheetHeaderTableViewCell.self)", for: indexPath) as! MaterialActionSheetHeaderTableViewCell
+        if !noHeader && indexPath.section == 0 {
+            let headerCell = tableView.dequeueReusableCell(withIdentifier: MaterialActionSheetHeaderTableViewCell.reuseIdentifier, for: indexPath) as! MaterialActionSheetHeaderTableViewCell
             headerCell.bind(title: title, message: message)
             return headerCell
         }
         
         var action: MaterialAction
         if noHeader {
-            action = actionSections[(indexPath as NSIndexPath).section][(indexPath as NSIndexPath).row]
+            action = actionSections[indexPath.section][indexPath.row]
         } else {
-            action = actionSections[(indexPath as NSIndexPath).section - 1][(indexPath as NSIndexPath).row]
+            action = actionSections[indexPath.section - 1][indexPath.row]
         }
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "\(MaterialActionSheetTableViewCell.self)", for: indexPath) as! MaterialActionSheetTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: MaterialActionSheetTableViewCell.reuseIdentifier, for: indexPath) as! MaterialActionSheetTableViewCell
         cell.bind(action: action)
         
         cell.onTapAccessoryView = { [unowned self] in
@@ -184,6 +187,7 @@ extension MaterialActionSheetController: UITableViewDataSource {
         
         return cell
     }
+    
 }
 
 // MARK: UITableViewDelegate
@@ -191,15 +195,15 @@ extension MaterialActionSheetController: UITableViewDelegate {
     // Selection logic
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
          // Tap at header does nothing
-        if !noHeader && (indexPath as NSIndexPath).section == 0 {
+        if !noHeader && indexPath.section == 0 {
             return
         }
         
         var action: MaterialAction
         if noHeader {
-            action = actionSections[(indexPath as NSIndexPath).section][(indexPath as NSIndexPath).row]
+            action = actionSections[indexPath.section][indexPath.row]
         } else {
-            action = actionSections[(indexPath as NSIndexPath).section - 1][(indexPath as NSIndexPath).row]
+            action = actionSections[indexPath.section - 1][indexPath.row]
         }
         
         action.handler?(action.accessoryView)
@@ -242,19 +246,19 @@ extension MaterialActionSheetController: UITableViewDelegate {
         return shortSeparatorView()
     }
     
-    fileprivate func emptyView() -> UIView {
+    private func emptyView() -> UIView {
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
         view.backgroundColor = theme.backgroundColor
         return view
     }
     
-    fileprivate func longSeparatorView() -> UIView {
+    private func longSeparatorView() -> UIView {
         let lineView = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
         lineView.backgroundColor = theme.separatorColor
         return lineView
     }
     
-    fileprivate func shortSeparatorView() -> UIView {
+    private func shortSeparatorView() -> UIView {
         let separatorLeadingSpace = 2 * 16 + theme.iconSize.width // 2 * margin + icon's width
         
         let view = UIView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: applicationWindow.frame.size.width, height: 1)))
@@ -266,5 +270,6 @@ extension MaterialActionSheetController: UITableViewDelegate {
         view.addSubview(lineView)
         return view
     }
+    
 }
 

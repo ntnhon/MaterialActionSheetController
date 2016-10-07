@@ -6,9 +6,11 @@
 
 import Foundation
 
-internal final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
+internal final class MaterialActionSheetHeaderTableViewCell: UITableViewCell, ReusableCell {
+    
     private var titleLabel = UILabel()
     private var messageLabel = UILabel()
+    
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -53,4 +55,5 @@ internal final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
         titleLabel.text = title
         messageLabel.text = message
     }
+    
 }

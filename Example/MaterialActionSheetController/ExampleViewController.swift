@@ -20,8 +20,10 @@ final class ExampleViewController: UITableViewController {
     }
     
     fileprivate func doSomething() {
-        // Dummy function
-        print("I've done something.\n")
+        let dummyAlert = UIAlertController(title: "Alert", message: "Clicked!", preferredStyle: UIAlertControllerStyle.alert)
+        let closeButton = UIAlertAction(title: "Close", style: .cancel, handler: nil)
+        dummyAlert.addAction(closeButton)
+        present(dummyAlert, animated: true, completion: nil)
     }
     
     fileprivate func fullOption(theme: MaterialActionSheetTheme) {
@@ -116,12 +118,10 @@ final class ExampleViewController: UITableViewController {
         
         materialActionSheetController.willDismiss = { [unowned self] in
             print("I will dismiss.")
-            self.doSomething()
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
             print("I did dismiss.")
-            self.doSomething()
         }
         
         present(materialActionSheetController, animated: true, completion: nil)
@@ -149,12 +149,10 @@ final class ExampleViewController: UITableViewController {
         
         materialActionSheetController.willDismiss = { [unowned self] in
             print("I will dismiss.")
-            self.doSomething()
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
             print("I did dismiss.")
-            self.doSomething()
         }
         
         present(materialActionSheetController, animated: true, completion: nil)
@@ -193,12 +191,10 @@ final class ExampleViewController: UITableViewController {
         
         materialActionSheetController.willDismiss = { [unowned self] in
             print("I will dismiss.")
-            self.doSomething()
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
             print("I did dismiss.")
-            self.doSomething()
         }
         
         present(materialActionSheetController, animated: true, completion: nil)
@@ -219,12 +215,10 @@ final class ExampleViewController: UITableViewController {
         
         materialActionSheetController.willDismiss = { [unowned self] in
             print("I will dismiss.")
-            self.doSomething()
         }
         
         materialActionSheetController.didDismiss = { [unowned self] in
             print("I did dismiss.")
-            self.doSomething()
         }
         
         present(materialActionSheetController, animated: true, completion: nil)

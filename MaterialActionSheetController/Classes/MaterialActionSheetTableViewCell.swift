@@ -6,7 +6,8 @@
 
 import Foundation
 
-internal final class MaterialActionSheetTableViewCell: UITableViewCell {
+internal final class MaterialActionSheetTableViewCell: UITableViewCell, ReusableCell {
+    
     private var iconImageView = UIImageView()
     private var titleLabel = UILabel()
     private var customAccessoryView = UIView()
@@ -14,6 +15,7 @@ internal final class MaterialActionSheetTableViewCell: UITableViewCell {
     private var customAccessoryViewHeightConstraint: NSLayoutConstraint!
     
     var onTapAccessoryView: (() -> Void)?
+    
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -104,4 +106,5 @@ internal final class MaterialActionSheetTableViewCell: UITableViewCell {
     @objc fileprivate func accessoryViewTapped() {
         onTapAccessoryView?()
     }
+    
 }

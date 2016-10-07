@@ -8,12 +8,14 @@ import Foundation
 
 public typealias HandlerWithAccessoryView = (_ accessoryView: UIView?) -> Void
 public struct MaterialAction {
+    
     public let icon: UIImage?
     public let title: String
     public let handler: HandlerWithAccessoryView?
     public let accessoryView: UIView?
     public let accessoryHandler: HandlerWithAccessoryView?
     public let dismissOnAccessoryTouch: Bool?
+    
     
     public init(icon: UIImage?, title: String, handler: HandlerWithAccessoryView?, accessoryView: UIView? = nil, dismissOnAccessoryTouch: Bool? = true, accessoryHandler: HandlerWithAccessoryView? = nil) {
         self.icon = icon
@@ -23,4 +25,5 @@ public struct MaterialAction {
         self.dismissOnAccessoryTouch = dismissOnAccessoryTouch
         self.accessoryHandler = accessoryHandler
     }
+    
 }
