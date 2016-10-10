@@ -114,14 +114,16 @@ internal extension MaterialActionSheetTableViewCell {
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        expandAnimation(from: contentView.convert(touches.first!.location(in: contentView), from: contentView))
+        if MaterialActionSheetTheme.currentTheme.pulseAnimationOnSelection {
+            expandAnimation(from: contentView.convert(touches.first!.location(in: contentView), from: contentView))
+        }
     }
     
     private func expandAnimation(from point: CGPoint) {
         let animationLayer = CAShapeLayer()
         
         let edgeLenght = bounds.width/2
-        animationLayer.backgroundColor = MaterialActionSheetTheme.currentTheme.selectionColor.cgColor
+        animationLayer.backgroundColor = MaterialActionSheetTheme.currentTheme.pulseColor.cgColor
         animationLayer.frame = CGRect(origin: CGPoint(x: point.x - edgeLenght/2, y: point.y - edgeLenght/2), size: CGSize(width: edgeLenght, height: edgeLenght))
         animationLayer.cornerRadius = edgeLenght/2
         
@@ -137,7 +139,7 @@ internal extension MaterialActionSheetTableViewCell {
         scaleAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
         
         let fadeAnimation = CABasicAnimation(keyPath: "backgroundColor")
-        fadeAnimation.toValue = MaterialActionSheetTheme.currentTheme.selectionColor.withAlphaComponent(0).cgColor
+        fadeAnimation.toValue = MaterialActionSheetTheme.currentTheme.pulseColor.withAlphaComponent(0).cgColor
         fadeAnimation.fillMode = kCAFillModeForwards
         fadeAnimation.isRemovedOnCompletion = true
         fadeAnimation.duration = duration

@@ -11,6 +11,8 @@ public struct MaterialActionSheetTheme {
     public var dimBackgroundColor: UIColor = UIColor.black.withAlphaComponent(0.2)
     public var backgroundColor: UIColor = UIColor.white
     public var animationDuration: TimeInterval = 0.25
+    public var pulseAnimationOnSelection: Bool = true
+    public var pulseColor: UIColor = UIColor.lightGray.withAlphaComponent(0.2)
     
     // Header's title label
     public var headerTitleFont: UIFont {
@@ -45,8 +47,6 @@ public struct MaterialActionSheetTheme {
     /// In case there is no header (title and message are both nil)
     public var firstSectionIsHeader: Bool = false
     
-    public var selectionColor: UIColor = UIColor.lightGray.withAlphaComponent(0.2)
-    
     // Singleton instance
     internal static var currentTheme = MaterialActionSheetTheme()
     
@@ -63,7 +63,7 @@ public struct MaterialActionSheetTheme {
         darkTheme.headerMessageColor = UIColor.white
         darkTheme.textColor = UIColor.white
         darkTheme.iconTemplateColor = UIColor.white
-        darkTheme.selectionColor = UIColor.white.withAlphaComponent(0.2)
+        darkTheme.pulseColor = UIColor.white.withAlphaComponent(0.2)
         return darkTheme
     }
     
