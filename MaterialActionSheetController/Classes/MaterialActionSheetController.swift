@@ -23,6 +23,8 @@ public final class MaterialActionSheetController: UIViewController {
     fileprivate let applicationWindow = UIApplication.shared.keyWindow!
     fileprivate var dimBackgroundView = UIView()
     private let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
+    fileprivate var tableViewMinY: CGFloat = 0
+    
     private var dismissing = false
     
     public var message: String?
@@ -78,16 +80,10 @@ public final class MaterialActionSheetController: UIViewController {
     }
     
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if tableView.contentSize.height <= theme.maxHeight {
-            tableView.frame.size = tableView.contentSize
-            tableView.isScrollEnabled = false
-        } else {
-            tableView.frame.size = CGSize(width: tableView.frame.width, height: theme.maxHeight)
-            tableView.isScrollEnabled = true
-        }
+        tableViewMinY = UIScreen.main.bounds.height - tableView.contentSize.height - 70
     }
     
-    fileprivate func customDismiss(with action: MaterialAction? = nil) {
+    fileprivate func customDismiss(with action: MaterialAction? = nil, delayed: Bool = true) {
         if dismissing {
             return
         }
@@ -95,7 +91,8 @@ public final class MaterialActionSheetController: UIViewController {
         dismissing = true
         
         willDismiss?()
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) { [unowned self] in
+        let dispatchTime = delayed ? DispatchTime.now() + 0.1 : DispatchTime.now()
+        DispatchQueue.main.asyncAfter(deadline: dispatchTime) { [unowned self] in
             UIView.animate(withDuration: self.theme.animationDuration, animations: {[unowned self] in
                 self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height)
                 self.dimBackgroundView.alpha = 0
@@ -145,6 +142,30 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.separatorColor = theme.backgroundColor
         tableView.backgroundColor = theme.backgroundColor
         applicationWindow.addSubview(tableView)
+    }
+    
+}
+
+// MARK: UIScrollViewDelegate
+extension MaterialActionSheetController: UIScrollViewDelegate {
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.frame.origin.y - scrollView.contentOffset.y > tableViewMinY {
+            scrollView.frame.origin.y -= scrollView.contentOffset.y
+        } else {
+            scrollView.isScrollEnabled = false
+        }
+    }
+    
+    public func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+        scrollView.isScrollEnabled = true
+        let contentHeight = scrollView.contentSize.height
+        if scrollView.frame.origin.y > 0 && scrollView.frame.origin.y > UIScreen.main.bounds.height - contentHeight*2/3 {
+            customDismiss(with: nil, delayed: false)
+        } else {
+            UIView.animate(withDuration: theme.animationDuration, animations: {
+                scrollView.frame.origin.y = UIScreen.main.bounds.height - contentHeight
+            })
+        }
     }
     
 }
