@@ -23,6 +23,7 @@ public final class MaterialActionSheetController: UIViewController {
     fileprivate let applicationWindow = UIApplication.shared.keyWindow!
     fileprivate var dimBackgroundView = UIView()
     private let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
+    private var dismissing = false
     
     public var message: String?
     fileprivate var noHeader: Bool {
@@ -61,7 +62,7 @@ public final class MaterialActionSheetController: UIViewController {
         animateAddTable()
     }
     
-    fileprivate func animateAddTable() {
+    private func animateAddTable() {
         UIView.animate(withDuration: theme.animationDuration, animations: { [unowned self] in
             
             if self.tableView.contentSize.height <= self.theme.maxHeight {
@@ -86,25 +87,33 @@ public final class MaterialActionSheetController: UIViewController {
         }
     }
     
-    fileprivate func dismiss(withAction action: MaterialAction? = nil) {
+    fileprivate func customDismiss(with action: MaterialAction? = nil) {
+        if dismissing {
+            return
+        }
+        
+        dismissing = true
+        
         willDismiss?()
-        UIView.animate(withDuration: theme.animationDuration, animations: {[unowned self] in
-            self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height)
-            self.dimBackgroundView.alpha = 0
-        }, completion: { [unowned self] (finished) in
-            self.tableView.removeFromSuperview()
-            self.dimBackgroundView.removeFromSuperview()
-            self.dismiss(animated: false, completion: {
-                if let action = action {
-                    action.handler?(action)
-                }
-                self.didDismiss?()
-            })
-        }) 
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.1) { [unowned self] in
+            UIView.animate(withDuration: self.theme.animationDuration, animations: {[unowned self] in
+                self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height)
+                self.dimBackgroundView.alpha = 0
+                }, completion: { [unowned self] (finished) in
+                    self.tableView.removeFromSuperview()
+                    self.dimBackgroundView.removeFromSuperview()
+                    self.dismiss(animated: false, completion: {
+                        if let action = action {
+                            action.handler?(action)
+                        }
+                        self.didDismiss?()
+                    })
+                })
+        }
     }
     
     // Dim background
-    fileprivate func addDimBackgroundView() {
+    private func addDimBackgroundView() {
         dimBackgroundView = UIView(frame: applicationWindow.frame)
         dimBackgroundView.backgroundColor = theme.dimBackgroundColor
         let tap = UITapGestureRecognizer(target: self, action: #selector(MaterialActionSheetController.dimBackgroundViewTapped))
@@ -117,12 +126,12 @@ public final class MaterialActionSheetController: UIViewController {
         }) 
     }
     
-    @objc fileprivate func dimBackgroundViewTapped() {
-        dismiss()
+    @objc private func dimBackgroundViewTapped() {
+        customDismiss()
     }
     
     // TableView
-    fileprivate func addTableView() {
+    private func addTableView() {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorColor = UIColor.clear
@@ -184,7 +193,7 @@ extension MaterialActionSheetController: UITableViewDataSource {
             
             if let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
                 , dismissOnAccessoryTouch == true {
-                self.dismiss(withAction: action)
+                self.customDismiss(with: action)
             }
         }
         
@@ -208,8 +217,8 @@ extension MaterialActionSheetController: UITableViewDelegate {
         } else {
             action = actionSections[indexPath.section - 1][indexPath.row]
         }
-
-        dismiss(withAction: action)
+        
+        customDismiss(with: action)
     }
     
     // Add separator between sections

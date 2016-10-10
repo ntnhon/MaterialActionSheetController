@@ -8,9 +8,9 @@ import Foundation
 
 internal final class MaterialActionSheetTableViewCell: UITableViewCell, ReusableCell {
     
-    private var iconImageView = UIImageView()
-    private var titleLabel = UILabel()
-    private var customAccessoryView = UIView()
+    private let iconImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let customAccessoryView = UIView()
     private var customAccessoryViewWidthConstraint: NSLayoutConstraint!
     private var customAccessoryViewHeightConstraint: NSLayoutConstraint!
     
@@ -19,6 +19,7 @@ internal final class MaterialActionSheetTableViewCell: UITableViewCell, Reusable
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        clipsToBounds = true
         selectionStyle = .none
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
@@ -63,7 +64,7 @@ internal final class MaterialActionSheetTableViewCell: UITableViewCell, Reusable
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     func bind(action: MaterialAction) {
@@ -93,7 +94,7 @@ internal final class MaterialActionSheetTableViewCell: UITableViewCell, Reusable
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        // Clean iconImageView and customAccessoryView
+        // Clean iconImageView, customAccessoryView
         iconImageView.image = nil
         
         for subView in customAccessoryView.subviews {
@@ -103,8 +104,51 @@ internal final class MaterialActionSheetTableViewCell: UITableViewCell, Reusable
         customAccessoryViewHeightConstraint.constant = 0
     }
     
-    @objc fileprivate func accessoryViewTapped() {
+    @objc private func accessoryViewTapped() {
         onTapAccessoryView?()
+    }
+
+}
+
+internal extension MaterialActionSheetTableViewCell {
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        expandAnimation(from: contentView.convert(touches.first!.location(in: contentView), from: contentView))
+    }
+    
+    private func expandAnimation(from point: CGPoint) {
+        let animationLayer = CAShapeLayer()
+        
+        let edgeLenght = bounds.width/2
+        animationLayer.backgroundColor = MaterialActionSheetTheme.currentTheme.selectionColor.cgColor
+        animationLayer.frame = CGRect(origin: CGPoint(x: point.x - edgeLenght/2, y: point.y - edgeLenght/2), size: CGSize(width: edgeLenght, height: edgeLenght))
+        animationLayer.cornerRadius = edgeLenght/2
+        
+        contentView.layer.addSublayer(animationLayer)
+        
+        let duration = 0.3
+        
+        let scaleAnimation = CABasicAnimation(keyPath: "transform.scale")
+        scaleAnimation.toValue = 5
+        scaleAnimation.fillMode = kCAFillModeForwards
+        scaleAnimation.isRemovedOnCompletion = true
+        scaleAnimation.duration = duration
+        scaleAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        
+        let fadeAnimation = CABasicAnimation(keyPath: "backgroundColor")
+        fadeAnimation.toValue = MaterialActionSheetTheme.currentTheme.selectionColor.withAlphaComponent(0).cgColor
+        fadeAnimation.fillMode = kCAFillModeForwards
+        fadeAnimation.isRemovedOnCompletion = true
+        fadeAnimation.duration = duration
+        fadeAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseInEaseOut)
+        
+        animationLayer.add(scaleAnimation, forKey: nil)
+        animationLayer.add(fadeAnimation, forKey: nil)
+        
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + duration - 0.1) { 
+            animationLayer.removeFromSuperlayer()
+        }
     }
     
 }

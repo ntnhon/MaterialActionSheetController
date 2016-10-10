@@ -45,6 +45,8 @@ public struct MaterialActionSheetTheme {
     /// In case there is no header (title and message are both nil)
     public var firstSectionIsHeader: Bool = false
     
+    public var selectionColor: UIColor = UIColor.lightGray.withAlphaComponent(0.2)
+    
     // Singleton instance
     internal static var currentTheme = MaterialActionSheetTheme()
     
@@ -61,6 +63,7 @@ public struct MaterialActionSheetTheme {
         darkTheme.headerMessageColor = UIColor.white
         darkTheme.textColor = UIColor.white
         darkTheme.iconTemplateColor = UIColor.white
+        darkTheme.selectionColor = UIColor.white.withAlphaComponent(0.2)
         return darkTheme
     }
     

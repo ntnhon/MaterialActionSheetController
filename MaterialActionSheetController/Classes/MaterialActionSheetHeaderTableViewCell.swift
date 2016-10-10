@@ -8,8 +8,8 @@ import Foundation
 
 internal final class MaterialActionSheetHeaderTableViewCell: UITableViewCell, ReusableCell {
     
-    private var titleLabel = UILabel()
-    private var messageLabel = UILabel()
+    private let titleLabel = UILabel()
+    private let messageLabel = UILabel()
     
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -48,7 +48,7 @@ internal final class MaterialActionSheetHeaderTableViewCell: UITableViewCell, Re
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     func bind(title: String?, message: String?) {
