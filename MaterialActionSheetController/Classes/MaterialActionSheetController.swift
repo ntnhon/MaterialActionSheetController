@@ -209,7 +209,7 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.register(MaterialActionSheetHeaderTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetHeaderTableViewCell.self)")
         tableView.frame.origin = CGPoint(x: 0, y: applicationWindow.frame.height)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 50
         tableView.separatorColor = theme.backgroundColor
         tableView.backgroundColor = theme.backgroundColor
@@ -361,7 +361,7 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
     
     var onTapAccessoryView: (() -> Void)?
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
@@ -456,7 +456,7 @@ private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
     fileprivate var titleLabel = UILabel()
     fileprivate var messageLabel = UILabel()
     
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+    private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
