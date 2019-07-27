@@ -103,6 +103,7 @@ public final class MaterialActionSheetController: UIViewController {
     fileprivate let applicationWindow = (UIApplication.shared.delegate!.window!)!
     fileprivate var dimBackgroundView = UIView()
     fileprivate let tableView = UITableView(frame: UIScreen.main.bounds, style: .plain)
+    fileprivate var tableViewContentSizeObserver: NSKeyValueObservation?
     
     public var message: String?
     fileprivate var noHeader: Bool {
@@ -125,7 +126,7 @@ public final class MaterialActionSheetController: UIViewController {
     }
     
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     override public func viewDidLoad() {
@@ -142,33 +143,23 @@ public final class MaterialActionSheetController: UIViewController {
     
     fileprivate func animateAddTable() {
         UIView.animate(withDuration: theme.animationDuration, animations: { [unowned self] in
-            
             if self.tableView.contentSize.height <= self.theme.maxHeight {
                 self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height - self.tableView.contentSize.height)
             } else {
                 self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height - self.theme.maxHeight)
             }
-        }) 
-        
-        
+        })
     }
 
     deinit {
-        tableView.removeObserver(self, forKeyPath: "contentSize")
+        print("MaterialActionSheetController is deallocated")
     }
-    
-    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if tableView.contentSize.height <= theme.maxHeight {
-            tableView.frame.size = tableView.contentSize
-            tableView.isScrollEnabled = false
-        } else {
-            tableView.frame.size = CGSize(width: tableView.frame.width, height: theme.maxHeight)
-            tableView.isScrollEnabled = true
-        }
-    }
-    
+
     fileprivate func dismiss() {
         willDismiss?()
+        tableViewContentSizeObserver?.invalidate()
+        tableViewContentSizeObserver = nil
+        
         UIView.animate(withDuration: theme.animationDuration, animations: {[unowned self] in
             self.tableView.frame.origin = CGPoint(x: 0, y: self.applicationWindow.frame.height)
             self.dimBackgroundView.alpha = 0
@@ -204,13 +195,23 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.separatorColor = UIColor.clear
-        tableView.addObserver(self, forKeyPath: "contentSize", options: NSKeyValueObservingOptions.new, context: nil)
+        
+        tableViewContentSizeObserver = tableView.observe(\UITableView.contentSize, options: .new, changeHandler: { [unowned self] (tableView, _) in
+            if self.tableView.contentSize.height <= self.theme.maxHeight {
+                self.tableView.frame.size = tableView.contentSize
+                self.tableView.isScrollEnabled = false
+            } else {
+                self.tableView.frame.size = CGSize(width: tableView.frame.width, height: self.theme.maxHeight)
+                self.tableView.isScrollEnabled = true
+            }
+        })
+
         tableView.register(MaterialActionSheetTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetTableViewCell.self)")
         tableView.register(MaterialActionSheetHeaderTableViewCell.self, forCellReuseIdentifier: "\(MaterialActionSheetHeaderTableViewCell.self)")
+        
         tableView.frame.origin = CGPoint(x: 0, y: applicationWindow.frame.height)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 50
         tableView.separatorColor = theme.backgroundColor
         tableView.backgroundColor = theme.backgroundColor
         applicationWindow.addSubview(tableView)
@@ -259,8 +260,8 @@ extension MaterialActionSheetController: UITableViewDataSource {
         cell.onTapAccessoryView = { [unowned self] in
             action.accessoryHandler?(action.accessoryView)
             
-            if let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch
-                , dismissOnAccessoryTouch == true {
+            if let dismissOnAccessoryTouch = action.dismissOnAccessoryTouch,
+                dismissOnAccessoryTouch == true {
                 self.dismiss()
             }
         }
@@ -374,10 +375,12 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         
         // Auto layout iconImageView
         iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint(item: iconImageView, attribute: .leading, relatedBy: .equal, toItem: contentView, attribute: .leadingMargin, multiplier: 1, constant: 0).isActive = true
-        NSLayoutConstraint(item: iconImageView, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
-        NSLayoutConstraint(item: iconImageView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: MaterialActionSheetTheme.currentTheme.iconSize.width).isActive = true
-        NSLayoutConstraint(item: iconImageView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: MaterialActionSheetTheme.currentTheme.iconSize.height).isActive = true
+        NSLayoutConstraint.activate([
+            iconImageView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            iconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            iconImageView.widthAnchor.constraint(equalToConstant: MaterialActionSheetTheme.currentTheme.iconSize.width),
+            iconImageView.heightAnchor.constraint(equalToConstant: MaterialActionSheetTheme.currentTheme.iconSize.height)
+            ])
         
         // Auto layout titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -388,21 +391,27 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
         }
         titleLabel.font = MaterialActionSheetTheme.currentTheme.textFont
         titleLabel.textColor = MaterialActionSheetTheme.currentTheme.textColor
-        NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .equal, toItem: iconImageView, attribute: .trailing, multiplier: 1, constant: 15).isActive = true
-        NSLayoutConstraint(item: titleLabel, attribute: .trailing, relatedBy: .equal, toItem: customAccessoryView, attribute: .leadingMargin, multiplier: 1, constant: 0).isActive = true
-        NSLayoutConstraint(item: titleLabel, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
-        NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: 10).isActive = true
-        NSLayoutConstraint(item: titleLabel, attribute: .bottom, relatedBy: .equal, toItem: contentView, attribute: .bottom, multiplier: 1, constant: -10).isActive = true
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: iconImageView.trailingAnchor, constant: 15),
+            titleLabel.trailingAnchor.constraint(equalTo: customAccessoryView.leadingAnchor),
+            titleLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
+            ])
         
         // Auto layout customAccessoryView
         customAccessoryView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint(item: customAccessoryView, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailing, multiplier: 1, constant: -10).isActive = true
-        NSLayoutConstraint(item: customAccessoryView, attribute: .centerY, relatedBy: .equal, toItem: contentView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
         
-        customAccessoryViewWidthConstraint = NSLayoutConstraint(item: customAccessoryView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 0)
+        NSLayoutConstraint.activate([
+            customAccessoryView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            customAccessoryView.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ])
+        
+        customAccessoryViewWidthConstraint = customAccessoryView.widthAnchor.constraint(equalToConstant: 0)
         customAccessoryViewWidthConstraint.isActive = true
         
-        customAccessoryViewHeightConstraint = NSLayoutConstraint(item: customAccessoryView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 0)
+        customAccessoryViewHeightConstraint = customAccessoryView.heightAnchor.constraint(equalToConstant: 0)
         customAccessoryViewHeightConstraint.isActive = true
     }
     
@@ -453,46 +462,49 @@ private final class MaterialActionSheetTableViewCell: UITableViewCell {
 }
 
 private final class MaterialActionSheetHeaderTableViewCell: UITableViewCell {
-    fileprivate var titleLabel = UILabel()
-    fileprivate var messageLabel = UILabel()
+    fileprivate let titleLabel = UILabel(frame: .zero)
+    fileprivate let messageLabel = UILabel(frame: .zero)
     
     private override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
-        contentView.backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
+        backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         backgroundColor = MaterialActionSheetTheme.currentTheme.backgroundColor
         
         titleLabel.textAlignment = MaterialActionSheetTheme.currentTheme.headerTitleAlignment
         messageLabel.textAlignment = MaterialActionSheetTheme.currentTheme.headerMessageAlignment
         
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(messageLabel)
-        
-        let margin: CGFloat = 4
+        addSubview(titleLabel)
+        addSubview(messageLabel)
         
         // Auto layout titleLabel
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         titleLabel.numberOfLines = 0
         titleLabel.font = MaterialActionSheetTheme.currentTheme.headerTitleFont
         titleLabel.textColor = MaterialActionSheetTheme.currentTheme.headerTitleColor
-
-        NSLayoutConstraint(item: titleLabel, attribute: .leading, relatedBy: .equal, toItem: contentView, attribute: .leadingMargin, multiplier: 1, constant: 0).isActive = true
-        NSLayoutConstraint(item: titleLabel, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailingMargin, multiplier: 1, constant: 0).isActive = true
-        NSLayoutConstraint(item: titleLabel, attribute: .top, relatedBy: .equal, toItem: contentView, attribute: .top, multiplier: 1, constant: margin).isActive = true
+        
+        NSLayoutConstraint.activate([
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10)
+            ])
         
         // Auto layout messageLabel
         messageLabel.translatesAutoresizingMaskIntoConstraints = false
         messageLabel.numberOfLines = 0
         messageLabel.font = MaterialActionSheetTheme.currentTheme.headerMessageFont
         messageLabel.textColor = MaterialActionSheetTheme.currentTheme.headerMessageColor
-        NSLayoutConstraint(item: messageLabel, attribute: .top, relatedBy: .equal, toItem: titleLabel, attribute: .bottomMargin, multiplier: 1, constant: 2*margin).isActive = true
-        NSLayoutConstraint(item: messageLabel, attribute: .trailing, relatedBy: .equal, toItem: contentView, attribute: .trailingMargin, multiplier: 1, constant: 0).isActive = true
-        NSLayoutConstraint(item: messageLabel, attribute: .leading, relatedBy: .equal, toItem: contentView, attribute: .leadingMargin, multiplier: 1, constant: 1).isActive = true
-        NSLayoutConstraint(item: messageLabel, attribute: .bottom, relatedBy: .equal, toItem: contentView, attribute: .bottomMargin, multiplier: 1, constant: 0).isActive = true
+        
+        NSLayoutConstraint.activate([
+            messageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
+            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -10),
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 10),
+            messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
+            ])
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     func bind(title: String?, message: String?) {
