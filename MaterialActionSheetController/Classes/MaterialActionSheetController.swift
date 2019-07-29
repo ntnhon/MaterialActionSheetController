@@ -202,6 +202,8 @@ public final class MaterialActionSheetController: UIViewController {
         tableView.separatorColor = theme.backgroundColor
         tableView.backgroundColor = theme.backgroundColor
         tableView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: applicationWindow.safeAreaInsets.bottom, right: 0)
+        tableView.tableFooterView = UIView(frame: .zero)
+        tableView.contentInsetAdjustmentBehavior = .never
         
         tableView.dataSource = self
         tableView.delegate = self
@@ -307,23 +309,23 @@ extension MaterialActionSheetController: UITableViewDelegate {
     
     // Add separator between sections
     public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if let customHeaderView = customHeaderView {
+        if let customHeaderView = customHeaderView, section == 0 {
             return customHeaderView.bounds.height
         }
         
-        return 1
+        return CGFloat.leastNormalMagnitude
+    }
+    
+    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if let customHeaderView = customHeaderView, section == 0 {
+            return customHeaderView
+        }
+
+        return emptyView()
     }
     
     public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 1
-    }
-    
-    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        if let customHeaderView = customHeaderView {
-            return customHeaderView
-        }
-        
-        return emptyView()
     }
     
     public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
